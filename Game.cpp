@@ -2,11 +2,11 @@
 
 Game::Game(){
     this->initWindow();
-    Ball* ball = new Ball();
+    Ball* ball = new Ball (sf::Vector2f{ 1.f,5.f });
     balls.push_back(ball);
-    Ball* ball2 = new Ball();
+    Ball* ball2 = new Ball(5.9f,0.f);
     balls.push_back(ball2);
-    balls.emplace_back(new Ball());
+    balls.emplace_back(new Ball(5.5f,-1.f));
 }
 
 Game::~Game(){
@@ -27,10 +27,11 @@ void Game::pollEvent(){
 }
 
 void Game::update(){
-    float i{ -0.5 };
+    //float i{ -0.5 };
     for (auto ball : balls) {
-       ball->moveBall(i, -i);
-       i+=0.3f;
+       ball->moveBall();
+       ball->ballWindowCollision(*this->window);
+       //i+=0.3f;
     }
 }
 

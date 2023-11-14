@@ -8,7 +8,6 @@ private:
 	sf::RenderWindow* window;
 	std::vector<Ball*> balls;
 
-	Ball ball;
 
 public:
 	Game();
