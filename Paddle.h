@@ -4,8 +4,9 @@
 
 class Paddle : public sf::Drawable{
 private:
+	float paddleSpeed{ 15 };
 	float positionY{ 500 };
-	sf::Vector2f paddleSize{ 50.f, 10.f };
+	sf::Vector2f paddleSize{ 100.f, 10.f };
 	sf::RectangleShape paddle;
 public:
 	void draw(sf::RenderTarget& target, sf::RenderStates state) const;
@@ -14,5 +15,8 @@ public:
 	~Paddle() = default;
 
 	void initPaddle();
+	void paddleWindowCollision(sf::RenderTarget& window);
+	void paddleMove(int x);
+	sf::FloatRect getBoundary();
 };
 

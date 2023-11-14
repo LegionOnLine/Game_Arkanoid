@@ -21,8 +21,10 @@ public:
 	void moveBall();
 
 	bool ballWindowCollision(sf::RenderTarget& window);
+	bool ballPaddleCollision(sf::FloatRect paddle);
 	void changeDirection(float x, float y);
 
+	sf::FloatRect getBoundary();
 	//temp func
 	sf::Vector2f getposition();
 };

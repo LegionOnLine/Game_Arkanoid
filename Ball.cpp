@@ -48,7 +48,27 @@ void Ball::changeDirection(float x, float y){
 	this->ballMovement.y *= y;
 }
 
+bool Ball::ballPaddleCollision(sf::FloatRect paddle){
+	//if bottome of ball is on the same lvl or bellow as paddle
+	if (
+		((this->shape.getPosition().y + this->ballRadius) >= paddle.top) &&
+		((this->shape.getPosition().y) <= paddle.top) &&
+		((this->shape.getPosition().x) >= paddle.left) && 
+		((this->shape.getPosition().x) <= (paddle.left + paddle.width) )) {
+			this->changeDirection(1, -1);
+		}
+
+	
+
+	return false;
+}
+
 //temp func
 sf::Vector2f Ball::getposition() {
 	return this->shape.getPosition();
+}
+
+sf::FloatRect Ball::getBoundary()
+{
+	return this->shape.getGlobalBounds();
 }
