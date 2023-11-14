@@ -7,15 +7,21 @@ class Game{
 private:
 	sf::RenderWindow* window;
 	std::vector<Ball*> balls;
+
 	Ball ball;
 
 public:
 	Game();
-	~Game() = default;
+	~Game();
 
+	//Basic Functionality
+	void pollEvent();
 	void update();
 	void draw();
+
+
 	bool GameWorking();
 	void initWindow();
+
 };
 

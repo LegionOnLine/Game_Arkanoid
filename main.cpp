@@ -1,13 +1,12 @@
-#include <SFML/Graphics.hpp>
 #include "Game.h"
 
-#include "Ball.h"
 
 int main()
 {
     Game game;
-    Ball ball;
+
     while (game.GameWorking()){
+        game.pollEvent();
         game.update();
         game.draw();
     }
