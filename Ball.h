@@ -1,12 +1,13 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
 class Ball : public sf::Drawable{
 private:
 	sf::CircleShape shape;
 	sf::Vector2f ballMovement;
 
-	float velocity{ 1 };
+	float velocity{ 2 };
 	float ballRadius{ 25.f };
 
 public:
@@ -15,11 +16,11 @@ public:
 	Ball(sf::Vector2f movementVec);
 	Ball(float x, float y);
 	Ball() = delete;
-	~Ball() = default;
+	~Ball();
 
 	void moveBall();
 
-	void ballWindowCollision(sf::RenderTarget& window);
+	bool ballWindowCollision(sf::RenderTarget& window);
 	void changeDirection(float x, float y);
 
 	//temp func

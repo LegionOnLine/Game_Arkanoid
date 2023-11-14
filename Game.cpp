@@ -2,11 +2,16 @@
 
 Game::Game(){
     this->initWindow();
-    Ball* ball = new Ball (sf::Vector2f{ 1.f,1.f });
+    this->paddle = new Paddle();
+    Ball* ball = new Ball (sf::Vector2f{ 1.f,2.f });
     balls.push_back(ball);
     Ball* ball2 = new Ball(1.9f,0.f);
     balls.push_back(ball2);
     balls.emplace_back(new Ball(1.5f,-1.f));
+    balls.emplace_back(new Ball(1.5f, 1.f));
+    balls.emplace_back(new Ball(1.5f, 1.5f));
+    balls.emplace_back(new Ball(1.5f, -1.5f));
+    balls.emplace_back(new Ball(1.5f, 3.f));
 }
 
 Game::~Game(){
@@ -27,21 +32,30 @@ void Game::pollEvent(){
 }
 
 void Game::update(){
-    //float i{ -0.5 };
+    int counter{ 0 };
     for (auto ball : balls) {
-       ball->moveBall();
-       ball->ballWindowCollision(*this->window);
-       //i+=0.3f;
+        ball->moveBall();
+       if (!ball->ballWindowCollision(*this->window)) { 
+           std::cout << "ballOut\n"; 
+           delete ball;
+           balls.erase(balls.begin() + counter);          
+       }
+       counter++;
     }
 }
 
 void Game::draw(){
-
     window->clear();
     //window.draw(shape);
+
+
+    window->draw(*paddle);
+
     for (Ball* ball : balls) {
         window->draw(*ball);
     }
+
+
     window->display();
 }
 
