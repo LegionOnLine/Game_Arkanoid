@@ -2,11 +2,11 @@
 
 Game::Game(){
     this->initWindow();
-    Ball* ball = new Ball (sf::Vector2f{ 1.f,5.f });
+    Ball* ball = new Ball (sf::Vector2f{ 1.f,1.f });
     balls.push_back(ball);
-    Ball* ball2 = new Ball(5.9f,0.f);
+    Ball* ball2 = new Ball(1.9f,0.f);
     balls.push_back(ball2);
-    balls.emplace_back(new Ball(5.5f,-1.f));
+    balls.emplace_back(new Ball(1.5f,-1.f));
 }
 
 Game::~Game(){

@@ -7,7 +7,7 @@ private:
 	sf::Vector2f ballMovement;
 
 	float velocity{ 1 };
-	float ballRadius{ 5.f };
+	float ballRadius{ 25.f };
 
 public:
 	void draw(sf::RenderTarget& target, sf::RenderStates state) const;
@@ -22,5 +22,7 @@ public:
 	void ballWindowCollision(sf::RenderTarget& window);
 	void changeDirection(float x, float y);
 
+	//temp func
+	sf::Vector2f getposition();
 };
 
