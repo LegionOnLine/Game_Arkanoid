@@ -31,18 +31,20 @@ Game::~Game(){
 //Basic Functionality
 void Game::pollEvent(){
     sf::Event event;
-    while (this->window->pollEvent(event))
-    {
+    while (this->window->pollEvent(event)){
         if (event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape))
             this->window->close();
-        if (event.KeyPressed) {
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E))
-                this->balls.clear();
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
-                this->paddle->paddleMove(1);
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
-                this->paddle->paddleMove(-1);
-
+    }
+    if (event.KeyPressed) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E))
+            this->balls.clear();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+            this->paddle->paddleMove(1);
+            this->paddle->paddleWindowCollision(*this->window);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
+            this->paddle->paddleMove(-1);
+            this->paddle->paddleWindowCollision(*this->window);
         }
     }
 }
@@ -70,18 +72,13 @@ void Game::update(){
     }
 }
 
+
 void Game::draw(){
     window->clear();
-    //window.draw(shape);
-
-
     window->draw(*paddle);
-
     for (Ball* ball : balls) {
         window->draw(*ball);
     }
-
-
     window->display();
 }
 
@@ -95,6 +92,6 @@ void Game::initWindow(){
         sf::VideoMode(800, 600),
         "Arkanoid!",
         sf::Style::Close | sf::Style::Titlebar);
-    this->window->setFramerateLimit(60);
+    this->window->setFramerateLimit(144);
     this->window->setVerticalSyncEnabled(false);
 }

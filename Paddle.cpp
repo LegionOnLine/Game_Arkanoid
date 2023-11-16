@@ -15,6 +15,13 @@ void Paddle::initPaddle(){
 	this->paddle.setOrigin(this->paddleSize.x/2, this->paddleSize.y/2);
 }
 
+void Paddle::paddleWindowCollision(sf::RenderTarget& window){
+	if (this->paddle.getPosition().x - this->paddleSize.x/2 < 0)
+		this->paddle.setPosition(this->paddleSize.x/2, this->paddle.getPosition().y);
+	else if (this->paddle.getPosition().x + this->paddleSize.x/2 > window.getSize().x)
+		this->paddle.setPosition(window.getSize().x - this->paddleSize.x/2, this->paddle.getPosition().y);
+}
+
 void Paddle::paddleMove(int x){
 	if (x > 0) this->paddle.move(this->paddleSpeed, 0.f);
 	else this->paddle.move(-this->paddleSpeed, 0.f);
