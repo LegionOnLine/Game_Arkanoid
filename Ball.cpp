@@ -6,7 +6,7 @@ void Ball::draw(sf::RenderTarget& target, sf::RenderStates state) const {
 
 Ball::Ball(sf::Vector2f movementVec)
 {
-	shape.setPosition(60.f, 60.f);
+	shape.setPosition(65.f, 300.f);
 	shape.setRadius(this->ballRadius);
 	shape.setFillColor(sf::Color::White);
 	this->velocity = velocity;

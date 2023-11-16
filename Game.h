@@ -8,10 +8,19 @@
 
 class Game{
 private:
+	int windowWidth{ 1000 }, windowHeight{ 600 };
 	sf::RenderWindow* window;
 	std::vector<Ball*> balls;
 	Paddle* paddle;
-	Block* block;
+	std::vector<std::vector<Block*>> blocks;
+	//Block* block;
+
+	int blocksCols{ 10 };
+	int blocksRows{ 3 };
+
+	int blockDist{ 10 };
+	float blockWidth{ static_cast<float>(((windowWidth - 100 - (blocksCols * blockDist)) / blocksCols)) };
+	float blockHight{ blockWidth * 0.3f };
 
 public:
 	Game();
@@ -24,6 +33,7 @@ public:
 
 
 	bool GameWorking();
+	void initBlocks();
 	void initWindow();
 
 };

@@ -12,17 +12,17 @@ template <class T1, class T2> bool intersection(T1* A, T2* B) {
 Game::Game(){
     this->initWindow();
     this->paddle = new Paddle();
-    Ball* ball = new Ball (sf::Vector2f{ 1.f,2.f });
+    Ball* ball = new Ball (sf::Vector2f{ 0.f,-2.f });
     balls.push_back(ball);
     Ball* ball2 = new Ball(1.9f,0.f);
     balls.push_back(ball2);
-    balls.emplace_back(new Ball(1.5f,-1.f));
+    balls.emplace_back(new Ball(1.5f, -1.f));
     balls.emplace_back(new Ball(1.5f, 1.f));
     balls.emplace_back(new Ball(1.5f, 1.5f));
     balls.emplace_back(new Ball(1.5f, -1.5f));
     balls.emplace_back(new Ball(1.5f, 3.f));
-
-    this->block = new Block(400, 80);
+    
+    //this->block = new Block(400, 80, 60,20);
 }
 
 Game::~Game(){    
@@ -71,9 +71,18 @@ void Game::update(){
             ball->changeDirection(1, -1);
             
        }
-       else if (ball->getBoundary().intersects(this->block->getBoundary())) {
-           std::cout << "B";
-           ball->changeDirection(-1, -1);
+       else {
+           bool hitBlock{ false };
+           for (size_t r{ 0 }; r < blocks.size() && !hitBlock; r++) {
+               for (size_t c{ 0 }; c < blocks.at(r).size() && !hitBlock; c++) {
+                   if (ball->getBoundary().intersects(blocks.at(r).at(c)->getBoundary())) {
+                       delete blocks.at(r).at(c);
+                       blocks.at(r).erase(blocks.at(r).begin() + c);
+                       std::cout << "hit!";
+                       ball->changeDirection(-1, -1);
+                   }
+               }
+           }
        }
        counter++;
     }
@@ -82,11 +91,20 @@ void Game::update(){
 
 void Game::draw(){
     window->clear();
+    
+    //window->draw(*this->block);
+    for (auto r : blocks) {
+        for (auto b : r) {
+           // if(b != nullptr) 
+                if(b->printableObj())
+                    window->draw(*b);
+        }
+    }
     window->draw(*paddle);
     for (Ball* ball : balls) {
         window->draw(*ball);
     }
-    window->draw(*this->block);
+
 
     window->display();
 }
@@ -95,12 +113,30 @@ bool Game::GameWorking(){
     return this->window->isOpen();
 }
 
+void Game::initBlocks(){
+    std::cout << this->blockWidth << std::endl;
+    for (int r{ 0 }; r < this->blocksRows; r++) {
+        std::vector <Block*> temp;
+        for (int c{ 0 }; c < this->blocksCols; c++) {
+            temp.emplace_back( new Block(
+                c* this->blockWidth + this->blockWidth/2 + this->blockDist + c*this->blockDist,
+                r* this->blockHight + this->blockHight/2 + this->blockDist + r*this->blockDist,
+                this->blockWidth, 
+                this->blockHight));
+        }
+        this->blocks.push_back(temp);
+        //temp.clear();
+    }
+}
+
 void Game::initWindow(){
     
     this->window = new sf::RenderWindow(
-        sf::VideoMode(800, 600),
+        sf::VideoMode(this->windowWidth, this->windowHeight),
         "Arkanoid!",
         sf::Style::Close | sf::Style::Titlebar);
     this->window->setFramerateLimit(144);
     this->window->setVerticalSyncEnabled(false);
+
+    this->initBlocks();
 }
