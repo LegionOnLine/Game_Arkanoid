@@ -21,6 +21,8 @@ Game::Game(){
     balls.emplace_back(new Ball(1.5f, 1.5f));
     balls.emplace_back(new Ball(1.5f, -1.5f));
     balls.emplace_back(new Ball(1.5f, 3.f));
+
+    this->block = new Block(400, 80);
 }
 
 Game::~Game(){    
@@ -67,6 +69,11 @@ void Game::update(){
        if (ball->getBoundary().intersects(this->paddle->getBoundary())){
             std::cout << "X";
             ball->changeDirection(1, -1);
+            
+       }
+       else if (ball->getBoundary().intersects(this->block->getBoundary())) {
+           std::cout << "B";
+           ball->changeDirection(-1, -1);
        }
        counter++;
     }
@@ -79,6 +86,8 @@ void Game::draw(){
     for (Ball* ball : balls) {
         window->draw(*ball);
     }
+    window->draw(*this->block);
+
     window->display();
 }
 
