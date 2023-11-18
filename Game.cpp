@@ -104,8 +104,9 @@ void Game::draw(){
     for (Ball* ball : balls) {
         window->draw(*ball);
     }
+    
 
-
+    window->draw(this->lines);
     window->display();
 }
 
@@ -130,7 +131,10 @@ void Game::initBlocks(){
 }
 
 void Game::initWindow(){
-    
+
+    this->lines[0].position = sf::Vector2f(10, 0);
+    this->lines[1].position = sf::Vector2f(100, 0);
+
     this->window = new sf::RenderWindow(
         sf::VideoMode(this->windowWidth, this->windowHeight),
         "Arkanoid!",

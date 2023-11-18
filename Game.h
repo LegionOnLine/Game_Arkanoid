@@ -8,6 +8,9 @@
 
 class Game{
 private:
+	sf::VertexArray lines(sf::LineStrip, 2);
+
+
 	int windowWidth{ 1000 }, windowHeight{ 600 };
 	sf::RenderWindow* window;
 	std::vector<Ball*> balls;
