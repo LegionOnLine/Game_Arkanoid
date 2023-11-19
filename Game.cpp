@@ -105,8 +105,24 @@ void Game::draw(){
         window->draw(*ball);
     }
     
+    //TEST VVVVV
 
-    window->draw(this->lines);
+    sf::VertexArray triangleStrip (sf::TriangleStrip);
+    sf::Color col = sf::Color::Blue;
+    triangleStrip.append(sf::Vertex(sf::Vector2f(10, 10), col)); //1
+    triangleStrip.append(sf::Vertex(sf::Vector2f(30, 10), col)); //2
+    triangleStrip.append(sf::Vertex(sf::Vector2f(10, 590), col)); //3
+    triangleStrip.append(sf::Vertex(sf::Vector2f(30, 570), col)); //4
+    triangleStrip.append(sf::Vertex(sf::Vector2f(990, 590), col)); //5
+    triangleStrip.append(sf::Vertex(sf::Vector2f(970, 570), col)); //6
+    triangleStrip.append(sf::Vertex(sf::Vector2f(990, 10), col)); //7
+    triangleStrip.append(sf::Vertex(sf::Vector2f(970, 10), col)); //8
+
+
+    window->draw(triangleStrip);
+    //TEST AAAAAAA
+
+
     window->display();
 }
 
@@ -132,8 +148,8 @@ void Game::initBlocks(){
 
 void Game::initWindow(){
 
-    this->lines[0].position = sf::Vector2f(10, 0);
-    this->lines[1].position = sf::Vector2f(100, 0);
+    //this->lines[0].position = sf::Vector2f(10, 0);
+    //this->lines[1].position = sf::Vector2f(100, 0);
 
     this->window = new sf::RenderWindow(
         sf::VideoMode(this->windowWidth, this->windowHeight),

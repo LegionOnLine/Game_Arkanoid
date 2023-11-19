@@ -6,10 +6,11 @@
 #include "Paddle.h"
 #include "Block.h"
 
-class Game{
+class Game {
 private:
-	sf::VertexArray lines(sf::LineStrip, 2);
+	//sf::VertexArray lines(sf::LineStrip, 2);
 
+	
 
 	int windowWidth{ 1000 }, windowHeight{ 600 };
 	sf::RenderWindow* window;
