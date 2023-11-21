@@ -25,7 +25,6 @@ void Ball::moveBall(){
 	shape.move(this->velocity * this->ballMovement.x, this->velocity * this->ballMovement.y);
 }
 
-
 bool Ball::ballWindowCollision(sf::RenderTarget& window) {
 	//Right & Left
 	if (((this->shape.getPosition().x + static_cast<int>(this->ballRadius)) >= window.getSize().x) ||
@@ -43,10 +42,27 @@ bool Ball::ballWindowCollision(sf::RenderTarget& window) {
 
 }
 
-void Ball::changeDirection(float x, float y){
-	this->ballMovement.x *= x;
-	this->ballMovement.y *= y;
+bool Ball::ballLost(float outOfScreen) {
+	//Bottom
+	if ((this->shape.getPosition().y + this->ballRadius) > outOfScreen) {
+		//this->changeDirection(1, -1);
+		return true;
+	}
+	return false;
 }
+
+bool Ball::ballFrameCollision(sf::Vector3f& frame) {
+	//Right & Left
+	if (((this->shape.getPosition().x - this->ballRadius) < frame.x) || // Left side
+		((this->shape.getPosition().x + this->ballRadius) > frame.z))	// Right side
+		this->changeDirection(-1, 1);
+	//Top 
+	if ((this->shape.getPosition().y - this->ballRadius) <= frame.y)	// Top side
+		this->changeDirection(1, -1);
+	//Bottom
+	return true;
+}
+
 
 bool Ball::ballPaddleCollision(sf::FloatRect paddle){
 	//if bottome of ball is on the same lvl or bellow as paddle
@@ -57,16 +73,19 @@ bool Ball::ballPaddleCollision(sf::FloatRect paddle){
 		((this->shape.getPosition().x) <= (paddle.left + paddle.width) )) {
 			this->changeDirection(1, -1);
 		}
-
-	
-
 	return false;
+}
+
+void Ball::changeDirection(float x, float y) {
+	this->ballMovement.x *= x;
+	this->ballMovement.y *= y;
 }
 
 //temp func
 sf::Vector2f Ball::getposition() {
 	return this->shape.getPosition();
 }
+
 
 sf::FloatRect Ball::getBoundary()
 {

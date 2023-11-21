@@ -8,11 +8,16 @@
 
 class Game {
 private:
-	//sf::VertexArray lines(sf::LineStrip, 2);
 
+	//Frame:
+	sf::VertexArray* mainFrame;
+	sf::Vector3f mainFrameCoords;
+	float mainFrameWidth;
+	float mainFrameBottom;
+	sf::Color frameColor;
 	
 
-	int windowWidth{ 1000 }, windowHeight{ 600 };
+	int windowWidth{ 1800 }, windowHeight{ 1200 };
 	sf::RenderWindow* window;
 	std::vector<Ball*> balls;
 	Paddle* paddle;
@@ -30,15 +35,17 @@ public:
 	Game();
 	~Game();
 
+
 	//Basic Functionality
-	void pollEvent();
-	void update();
-	void draw();
 
 
 	bool GameWorking();
 	void initBlocks();
 	void initWindow();
+	void initMainFrame();
 
+	void pollEvent();
+	void update();
+	void draw();
 };
 

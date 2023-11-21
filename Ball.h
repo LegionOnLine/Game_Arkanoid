@@ -7,7 +7,7 @@ private:
 	sf::CircleShape shape;
 	sf::Vector2f ballMovement;
 
-	float velocity{ 2 };
+	float velocity{ 1 };
 	float ballRadius{ 25.f };
 
 public:
@@ -21,6 +21,11 @@ public:
 	void moveBall();
 
 	bool ballWindowCollision(sf::RenderTarget& window);
+
+	bool ballLost(float y);
+	bool ballFrameCollision(sf::Vector3f& frame);
+	
+
 	bool ballPaddleCollision(sf::FloatRect paddle);
 	void changeDirection(float x, float y);
 
