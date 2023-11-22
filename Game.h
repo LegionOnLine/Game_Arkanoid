@@ -35,11 +35,11 @@ public:
 	Game();
 	~Game();
 
+	bool GameWorking();
 
 	//Basic Functionality
+	void startNewGame();
 
-
-	bool GameWorking();
 	void initBlocks();
 	void initWindow();
 	void initMainFrame();

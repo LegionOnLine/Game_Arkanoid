@@ -12,16 +12,7 @@ template <class T1, class T2> bool intersection(T1* A, T2* B) {
 Game::Game(){
     this->initWindow();
     this->paddle = new Paddle(this->mainFrameCoords.x + this->mainFrameCoords.z);
-    Ball* ball = new Ball (sf::Vector2f{ 0.f,-2.f });
-    balls.push_back(ball);
-    Ball* ball2 = new Ball(1.9f,0.f);
-    balls.push_back(ball2);
-    balls.emplace_back(new Ball(1.5f, -1.f));
-    balls.emplace_back(new Ball(1.5f, 1.f));
-    balls.emplace_back(new Ball(1.5f, 1.5f));
-    balls.emplace_back(new Ball(1.5f, -1.5f));
-    balls.emplace_back(new Ball(1.5f, 3.f));
-    //this->block = new Block(400, 80, 60,20);
+    startNewGame();
 }
 
 Game::~Game(){    
@@ -29,9 +20,21 @@ Game::~Game(){
     delete this->paddle;
 }
 
-//Basic Functionality
-bool Game::GameWorking(){
+bool Game::GameWorking() {
+
     return this->window->isOpen();
+}
+
+//Basic Functionality
+
+void Game::startNewGame(){
+    balls.emplace_back(new Ball(1.9f, 0.f, this->paddle->getPosition()));
+    balls.emplace_back(new Ball(0.f, -2.f, this->paddle->getPosition()));
+    balls.emplace_back(new Ball(1.5f, -1.f, this->paddle->getPosition()));
+    balls.emplace_back(new Ball(1.5f, 1.f, this->paddle->getPosition()));
+    balls.emplace_back(new Ball(1.5f, 1.5f, this->paddle->getPosition()));
+    balls.emplace_back(new Ball(1.5f, -1.5f, this->paddle->getPosition()));
+    balls.emplace_back(new Ball(1.5f, 3.f, this->paddle->getPosition()));
 }
 
 void Game::initBlocks(){
@@ -102,6 +105,12 @@ void Game::pollEvent() {
             this->paddle->paddleMove(-1);
             //this->paddle->paddleWindowCollision(*this->window);
             this->paddle->paddleFrameCollision(this->mainFrameCoords);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+            //release stacked ball
+            for (auto ball : balls) {
+                if (ball->isBallStuck()) ball->ballRelease();
+            }
         }
     }
 }

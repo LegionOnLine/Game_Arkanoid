@@ -4,25 +4,29 @@ void Ball::draw(sf::RenderTarget& target, sf::RenderStates state) const {
 	target.draw(this->shape, state);
 }
 
-Ball::Ball(sf::Vector2f movementVec)
+Ball::Ball(sf::Vector2f movementVec, sf::Vector2f possition)
 {
-	shape.setPosition(65.f, 300.f);
+	shape.setPosition(possition.x, possition.y-this->ballRadius);
 	shape.setRadius(this->ballRadius);
 	shape.setFillColor(sf::Color::White);
 	this->velocity = velocity;
 	this->ballMovement = movementVec;
 	shape.setOrigin(this->ballRadius, this->ballRadius);
+
+	this->ballStuck = true;
 }
 
-Ball::Ball(float x, float y):
-	Ball::Ball(sf::Vector2f {x,y}){
+Ball::Ball(float x, float y, sf::Vector2f possition):
+	Ball::Ball(sf::Vector2f {x,y}, possition){
 }
 Ball::~Ball(){
 	std::cout << "ballDestr\n";
 }
 
 void Ball::moveBall(){
-	shape.move(this->velocity * this->ballMovement.x, this->velocity * this->ballMovement.y);
+	if (!this->ballStuck) {
+		shape.move(this->velocity * this->ballMovement.x, this->velocity * this->ballMovement.y);
+	}
 }
 
 bool Ball::ballWindowCollision(sf::RenderTarget& window) {
@@ -90,4 +94,11 @@ sf::Vector2f Ball::getposition() {
 sf::FloatRect Ball::getBoundary()
 {
 	return this->shape.getGlobalBounds();
+}
+
+bool Ball::isBallStuck() {
+	return this->ballStuck;
+}
+void Ball::ballRelease(){
+	if (this->ballStuck) this->ballStuck = false;
 }

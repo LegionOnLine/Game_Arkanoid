@@ -14,6 +14,9 @@ void Paddle::initPaddle(){
 	this->paddle.setFillColor(sf::Color::Green);
 	//this->paddle.setPosition(50.f, this->positionY);
 	this->paddle.setOrigin(this->paddleSize.x/2, this->paddleSize.y/2);
+	this->hp = 3;
+	this->holdingBall = true;
+
 }
 
 void Paddle::paddleWindowCollision(sf::RenderTarget& window){
@@ -38,4 +41,8 @@ void Paddle::paddleMove(int x){
 
 sf::FloatRect Paddle::getBoundary(){
 	return this->paddle.getGlobalBounds();
+}
+
+sf::Vector2f Paddle::getPosition(){
+	return this->paddle.getPosition();
 }

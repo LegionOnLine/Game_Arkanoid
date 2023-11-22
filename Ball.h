@@ -7,14 +7,16 @@ private:
 	sf::CircleShape shape;
 	sf::Vector2f ballMovement;
 
+	bool ballStuck;
+
 	float velocity{ 1 };
 	float ballRadius{ 25.f };
 
 public:
 	void draw(sf::RenderTarget& target, sf::RenderStates state) const;
 
-	Ball(sf::Vector2f movementVec);
-	Ball(float x, float y);
+	Ball(sf::Vector2f movementVec, sf::Vector2f possition);
+	Ball(float x, float y, sf::Vector2f possition);
 	Ball() = delete;
 	~Ball();
 
@@ -28,6 +30,9 @@ public:
 
 	bool ballPaddleCollision(sf::FloatRect paddle);
 	void changeDirection(float x, float y);
+
+	bool isBallStuck();
+	void ballRelease();
 
 	sf::FloatRect getBoundary();
 	//temp func
