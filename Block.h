@@ -7,6 +7,7 @@ private:
 	sf::RectangleShape shape;
 	sf::Vector2f blockSize{ 60,20 };
 	bool printable{ true };
+	int points{ 1 };
 
 public:
 	void draw(sf::RenderTarget& target, sf::RenderStates state) const;
@@ -19,6 +20,7 @@ public:
 	sf::Vector2f getBlockSize();
 	bool printableObj();
 	bool changeState();
+	int getPoints();
 
 };
 

@@ -9,19 +9,19 @@
 ======================
 done from List bellow:
 + boarder collision (with frame)
++ Points 
++ Player lifes
++ GameOver
++ Lvl win (will set new blocks)
++ font for txt print
 
 
 * To implement Next:
-- Points 
 - Randomize lvl format
-- Player lifes
 - HiScore
 - file read/write
 - Wizualize bracket left/right
-- font for txt print
 - lvl-up's with working time
-- GameOver
-- Lvl win
 - speed and size parametrize
 - gravity
 - velocity & drag
@@ -29,6 +29,7 @@ done from List bellow:
 
 * To update:
 - intersection - ball changing dirrection (angle)
+- start new block set whit al balls around paddle
 - textures 
 
 * Other:

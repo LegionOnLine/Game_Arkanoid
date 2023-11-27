@@ -9,7 +9,7 @@ private:
 
 	bool ballStuck;
 
-	float velocity{ 1 };
+	float velocity{ 10 };
 	float ballRadius{ 25.f };
 
 public:

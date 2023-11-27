@@ -1,23 +1,20 @@
 #include "Paddle.h"
-
+#include <iostream>
 void Paddle::draw(sf::RenderTarget& target, sf::RenderStates state) const{
 	target.draw(this->paddle, state);
 }
 
-Paddle::Paddle(float frameX){
-	this->initPaddle();
-	this->paddle.setPosition(frameX / 2, this->positionY);
-}
-
-void Paddle::initPaddle(){
+Paddle::Paddle(float frameX, float frameY){
 	this->paddle.setSize(this->paddleSize);
 	this->paddle.setFillColor(sf::Color::Green);
-	//this->paddle.setPosition(50.f, this->positionY);
 	this->paddle.setOrigin(this->paddleSize.x/2, this->paddleSize.y/2);
+	this->paddle.setPosition(frameX, frameY);
+
+	//std::cout << this->paddle.getPosition().x;
 	this->hp = 3;
 	this->holdingBall = true;
-
 }
+
 
 void Paddle::paddleWindowCollision(sf::RenderTarget& window){
 	if (this->paddle.getPosition().x - this->paddleSize.x/2 < 0)

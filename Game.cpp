@@ -11,8 +11,13 @@ template <class T1, class T2> bool intersection(T1* A, T2* B) {
 
 Game::Game(){
     this->initWindow();
-    this->paddle = new Paddle(this->mainFrameCoords.x + this->mainFrameCoords.z);
-    startNewGame();
+    this->initGUI();
+    std::cout << this->mainFrameCoords.x << std::endl;;
+    this->paddle = new Paddle((this->mainFrameCoords.z - this->mainFrameCoords.x)/2, this->mainFrameBottom- this->mainFrameWidth * 3);
+    std::cout << (this->mainFrameCoords.z - this->mainFrameCoords.x) / 2; //795 = (1600 - 10) /2
+    if (!this->gameOver) {
+        startNewGame();
+    }
 }
 
 Game::~Game(){    
@@ -27,8 +32,30 @@ bool Game::GameWorking() {
 
 //Basic Functionality
 
+void Game::initGUI(){
+    if (!this->font.loadFromFile("./Fonts/TheLightFont.ttf"))
+        std::cout << "ERROR::Text Font Load Problem" << std::endl;
+
+    //init point text
+    this->textPoints.setPosition(this->window->getSize().x - 100, 25.f);
+    this->textPoints.setFont(this->font);
+    this->textPoints.setCharacterSize(20);
+    this->textPoints.setFillColor(sf::Color::White);
+
+    //init lives text
+    this->textLives.setPosition(this->window->getSize().x - 100, 50.f);
+    this->textLives.setFont(this->font);
+    this->textLives.setCharacterSize(20);
+    this->textLives.setFillColor(sf::Color::White);
+
+    this->textGame.setPosition(this->window->getSize().x/2-100, this->window->getSize().y / 2-50);
+    this->textGame.setFont(this->font);
+    this->textGame.setCharacterSize(60);
+    this->textGame.setFillColor(sf::Color::Red);
+}
+
 void Game::startNewGame(){
-    balls.emplace_back(new Ball(1.9f, 0.f, this->paddle->getPosition()));
+    //balls.emplace_back(new Ball(1.9f, 0.f, this->paddle->getPosition()));
     balls.emplace_back(new Ball(0.f, -2.f, this->paddle->getPosition()));
     balls.emplace_back(new Ball(1.5f, -1.f, this->paddle->getPosition()));
     balls.emplace_back(new Ball(1.5f, 1.f, this->paddle->getPosition()));
@@ -38,15 +65,17 @@ void Game::startNewGame(){
 }
 
 void Game::initBlocks(){
-    std::cout << this->blockWidth << std::endl;
+    //std::cout << this->blockWidth << std::endl;
     for (int r{ 0 }; r < this->blocksRows; r++) {
         std::vector <Block*> temp;
         for (int c{ 0 }; c < this->blocksCols; c++) {
             temp.emplace_back( new Block(
-                c* this->blockWidth + this->blockWidth/2 + this->blockDist + c*this->blockDist,
-                r* this->blockHight + this->blockHight/2 + this->blockDist + r*this->blockDist,
+                //point to the center of the block
+                c* (this->blockWidth + this->blockDist) + this->blockWidth/2 + this->blockDist + this->mainFrameCoords.x,
+                r* (this->blockHight + this->blockDist) + this->blockHight/2 + this->blockDist + this->mainFrameCoords.y,
                 this->blockWidth, 
                 this->blockHight));
+            this->blockCount++;
         }
         this->blocks.push_back(temp);
         //temp.clear();
@@ -69,7 +98,7 @@ void Game::initMainFrame(){
     this->frameColor = sf::Color::Blue;
     this->mainFrameCoords.x = 10.;
     this->mainFrameCoords.y = 10.;
-    this->mainFrameCoords.z = this->window->getSize().x - 100.;
+    this->mainFrameCoords.z = this->window->getSize().x - 200.;
 
     this->mainFrameBottom = this->window->getSize().y - 100.;
     this->mainFrameWidth = 10;
@@ -84,7 +113,11 @@ void Game::initMainFrame(){
     this->mainFrame->append(sf::Vertex(sf::Vector2f(this->mainFrameCoords.z, this->mainFrameCoords.y), this->frameColor)); //6
     this->mainFrame->append(sf::Vertex(sf::Vector2f(this->mainFrameCoords.z + this->mainFrameWidth, this->mainFrameBottom), this->frameColor)); //7
     this->mainFrame->append(sf::Vertex(sf::Vector2f(this->mainFrameCoords.z , this->mainFrameBottom), this->frameColor)); //8
+
+    this->blockWidth = ((this->mainFrameCoords.z - this->mainFrameCoords.x - this->mainFrameWidth) - (this->blocksCols * this->blockDist)) / this->blocksCols;
+    this->blockHight = this->blockWidth * 0.3f;
 }
+
 
 void Game::pollEvent() {
     sf::Event event;
@@ -124,6 +157,15 @@ void Game::update() {
             std::cout << "ballOut\n";
             delete ball;
             balls.erase(balls.begin() + counter);
+            if (this->balls.size() == 0) {
+                this->playerLives--;
+                if (this->playerLives <= 0)
+                    this->gameOver = true;
+                else
+                    this->startNewGame();
+
+
+            }
         }
         else
             ball->ballFrameCollision(this->mainFrameCoords);
@@ -134,7 +176,7 @@ void Game::update() {
         //}
         // intersection base on SFML funciotn sf::Rect https://www.sfml-dev.org/documentation/2.6.1/classsf_1_1Rect.php
         if (ball->getBoundary().intersects(this->paddle->getBoundary())) {
-            std::cout << "X";
+            //std::cout << "X";
             ball->changeDirection(1, -1);
         }
         else {
@@ -142,10 +184,14 @@ void Game::update() {
             for (size_t r{ 0 }; r < blocks.size() && !hitBlock; r++) {
                 for (size_t c{ 0 }; c < blocks.at(r).size() && !hitBlock; c++) {
                     if (ball->getBoundary().intersects(blocks.at(r).at(c)->getBoundary())) {
+                        this->playerPoints += blocks.at(r).at(c)->getPoints();
                         delete blocks.at(r).at(c);
                         blocks.at(r).erase(blocks.at(r).begin() + c);
-                        std::cout << "hit!";
                         ball->changeDirection(-1, -1);
+                        this->blockCount--;
+                        std::cout << "hit! - " << this->blockCount << std::endl;
+                        if (this->blockCount <= 0)
+                            this->initBlocks();
                     }
                 }
             }
@@ -154,10 +200,38 @@ void Game::update() {
     }
 }
 
+void Game::updateGui(){
+    std::stringstream ssPoints;
+    ssPoints << "Points: " << this->playerPoints;
+    this->textPoints.setString(ssPoints.str());
+
+    std::stringstream ssLives;
+    ssLives << "Lives: " << this->playerLives;
+    this->textLives.setString(ssLives.str());
+
+}
+
+void Game::updateGameText(){
+    std::stringstream ss;
+    ss << "Game Over";
+    this->textGame.setString(ss.str());
+}
+
+void Game::renderGui() {
+    this->updateGui();
+
+    this->window->draw(this->textPoints);
+    this->window->draw(this->textLives);
+    if (this->gameOver) {
+        this->updateGameText();
+        this->window->draw(this->textGame);
+    }
+}
 
 void Game::draw() {
     window->clear();
 
+    this->renderGui();
     //window->draw(*this->block);
     for (auto r : blocks) {
         for (auto b : r) {
@@ -170,13 +244,9 @@ void Game::draw() {
     for (Ball* ball : balls) {
         window->draw(*ball);
     }
-
-    //TEST VVVVV
-
-
     window->draw(*this->mainFrame);
-    //TEST AAAAAAA
-
+    //Block b((this->blockWidth / 2 + this->blockDist) , 150, 300, 300);
+    //window->draw(b);
 
     window->display();
 }

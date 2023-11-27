@@ -9,7 +9,7 @@ Block::Block(float x, float y, float w, float h){
 }
 
 Block::~Block(){
-	std::cout << "xBlock\n";
+	//std::cout << "xBlock\n";
 }
 
 void Block::initBlock(float x, float y, float w, float h){
@@ -37,4 +37,8 @@ bool Block::printableObj(){
 bool Block::changeState(){
 	this->printable = false;
 	return this->printable;
+}
+
+int Block::getPoints(){
+	return this->points;
 }
