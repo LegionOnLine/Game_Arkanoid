@@ -9,14 +9,14 @@ private:
 
 	bool ballStuck;
 
-	float velocity{ 10 };
-	float ballRadius{ 25.f };
+	float velocity{ 2 };
+	float ballRadius;// { 25.f };
 
 public:
 	void draw(sf::RenderTarget& target, sf::RenderStates state) const;
 
-	Ball(sf::Vector2f movementVec, sf::Vector2f possition);
-	Ball(float x, float y, sf::Vector2f possition);
+	Ball(sf::Vector2f movementVec, sf::Vector2f possition, float size);
+	Ball(float x, float y, sf::Vector2f possition, float size);
 	Ball() = delete;
 	~Ball();
 
@@ -37,5 +37,6 @@ public:
 	sf::FloatRect getBoundary();
 	//temp func
 	sf::Vector2f getposition();
+	float getSize();
 };
 

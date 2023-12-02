@@ -4,20 +4,21 @@ void Ball::draw(sf::RenderTarget& target, sf::RenderStates state) const {
 	target.draw(this->shape, state);
 }
 
-Ball::Ball(sf::Vector2f movementVec, sf::Vector2f possition)
+Ball::Ball(sf::Vector2f movementVec, sf::Vector2f possition, float size)
 {
-	shape.setPosition(possition.x, possition.y-this->ballRadius);
+	this->ballRadius = size;
 	shape.setRadius(this->ballRadius);
 	shape.setFillColor(sf::Color::White);
 	this->velocity = velocity;
 	this->ballMovement = movementVec;
 	shape.setOrigin(this->ballRadius, this->ballRadius);
+	shape.setPosition(possition.x, possition.y - this->ballRadius);
 
 	this->ballStuck = true;
 }
 
-Ball::Ball(float x, float y, sf::Vector2f possition):
-	Ball::Ball(sf::Vector2f {x,y}, possition){
+Ball::Ball(float x, float y, sf::Vector2f possition, float size):
+	Ball::Ball(sf::Vector2f {x,y}, possition, size){
 }
 Ball::~Ball(){
 	std::cout << "ballDestr\n";
@@ -101,4 +102,8 @@ bool Ball::isBallStuck() {
 }
 void Ball::ballRelease(){
 	if (this->ballStuck) this->ballStuck = false;
+}
+
+float Ball::getSize(){
+	return this->ballRadius;
 }

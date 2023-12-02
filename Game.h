@@ -10,6 +10,7 @@
 class Game {
 private:
 
+	//Text Objects
 	sf::Font font;
 	sf::Text textPoints;
 	sf::Text textLives;
@@ -17,18 +18,20 @@ private:
 
 	//Frame:
 	sf::VertexArray* mainFrame;
-	sf::Vector3f mainFrameCoords;
+	sf::Vector3f mainFrameCoords; // Left, Top, Right
 	float mainFrameWidth;
 	float mainFrameBottom;
+	float paddlePositionY;
 	sf::Color frameColor;
 	
 
 	int windowWidth{ 1800 }, windowHeight{ 1200 };
 	sf::RenderWindow* window;
 	std::vector<Ball*> balls;
+	float ballSize{ 25 };
 	Paddle* paddle;
+	sf::Vector2f paddleSize{ 150.f, 10.f };
 	std::vector<std::vector<Block*>> blocks;
-	//Block* block;
 
 	int blocksCols{ 10 };
 	int blocksRows{ 3 };
@@ -38,8 +41,8 @@ private:
 	int playerLives{ 2 };
 
 	int blockDist{ 10 };
-	float blockWidth; // { static_cast<float>(((windowWidth - 100 - (blocksCols * blockDist)) / blocksCols)) };
-	float blockHight; // { blockWidth * 0.3f };
+	float blockWidth;
+	float blockHight;
 
 	bool gameOver{ false };
 
@@ -56,7 +59,7 @@ public:
 	void initBlocks();
 	void initWindow();
 	void initMainFrame();
-
+	void intersection(Ball* ball, int counter);
 
 	void pollEvent();
 	void update();
