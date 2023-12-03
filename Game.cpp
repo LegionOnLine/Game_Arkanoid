@@ -17,17 +17,28 @@ template <class T> int intersectionDir(Ball* ball, T* t) {
     float tLeft = t->getBoundary().left;
     float tRight = t->getBoundary().left + t->getBoundary().width;
 
-    //top
-    if (ballY + ballSize >= tTop) {
-        //  (             )
-        //  [=============]
-        if (ballX - ballSize >= tLeft && ballX + ballSize <= tRight) { 
-            //BallHitDirectlyFrom Top
-            std::cout<< "Top";
+    if (ballY > tTop && ballY < tBottom) {
+        //( )[===]  left
+        if (ballX < tLeft && tLeft-ballX < ballSize){
+            std::cout << "left";
             return 1;
         }
-        //  (             )
-        //     [=============]
+        //[===]( )  right
+        if (ballX > tRight && ballX - tRight < ballSize) {
+            std::cout << "right";
+            return 1;
+        }
+    }
+    else if (ballY + ballSize >= tTop) {
+        //   ( )    top
+        //  [===]
+        if (ballX - ballSize >= tLeft && ballX + ballSize <= tRight) {
+            //BallHitDirectlyFrom Top
+            std::cout << "Top";
+            return 1;
+        }
+        //   ( )    topleft
+        //    [===]
         else if (ballX + ballSize >= tLeft && ballX - ballSize <= tLeft) {
             if (ballSize * ballSize < (
                 (ballY - tTop) * (ballY - tTop) +
@@ -38,27 +49,53 @@ template <class T> int intersectionDir(Ball* ball, T* t) {
             }
 
         }
-            //     (             )
-            //  [=============]
+        //       ( )    topright
+        //    [===]
         else if (ballX + ballSize >= tRight && ballX - ballSize <= tRight) {
             if (ballSize * ballSize < (
                 (ballY - tTop) * (ballY - tTop) +
                 (ballX - tRight) * (ballX - tRight)
                 )) {
-                std::cout <<"Top Right";
+                std::cout << "Top Right";
                 return 1;
             }
         }
         return -1;
 
     }
-    //topleft
-    //topright
-    //bottom
-    //bottomright
-    //bottomleft
-    //right
-    //left
+    else if (ballY - ballSize <= tBottom) {
+        //  [===]
+        //   ( )    bottom
+        if (ballX - ballSize >= tLeft && ballX + ballSize <= tRight) {
+            std::cout << "Bottom";
+            return 1;
+        }
+        //  [===]
+        // ( )    bottomleft
+        else if (ballX + ballSize >= tLeft && ballX - ballSize <= tLeft) {
+            if ((ballSize * ballSize) < (
+                (ballY - tBottom) * (ballY - tBottom) +
+                (ballX - tLeft) * (ballX - tLeft)
+                )) {
+                std::cout << "bottom left";
+                return 1;
+            }
+        }
+        //  [===]
+        //     ( )    bottomright
+        else if (ballX + ballSize >= tRight && ballX - ballSize <= tRight) {
+            if (ballSize * ballSize < (
+                (ballY - tBottom) * (ballY - tBottom) +
+                (ballX - tRight) * (ballX - tRight)
+                )) {
+                std::cout << "bottom Right";
+                return 1;
+            }
+        }
+    }
+    return -1;
+    
+        
 }
 
 Game::Game(){
@@ -217,11 +254,15 @@ void Game::intersection(Ball* ball, int counter){
         }
     }
     //ball hitting Paddle
-    else if (ballPositionY > this->paddlePositionY - this->paddleSize.y - this->ballSize) {
+    else if (ballPositionY > this->paddlePositionY - this->paddleSize.y - this->ballSize &&
+        ballPositionY < this->windowHeight) {
         int i = intersectionDir(ball, this->paddle);
-        if (ball->getBoundary().intersects(this->paddle->getBoundary())) {
+        if ( i != -1) {
             ball->changeDirection(1, -1);
         }
+        //if (ball->getBoundary().intersects(this->paddle->getBoundary())) {
+        //    ball->changeDirection(1, -1);
+        //}
     }    
     //ball lost at the bottom pit
     else if (ballPositionY >= this->windowHeight) {
