@@ -59,7 +59,7 @@ public:
 	void initBlocks();
 	void initWindow();
 	void initMainFrame();
-	void intersection(Ball* ball, int counter);
+	bool intersection(Ball* ball, int counter);
 
 	void pollEvent();
 	void update();

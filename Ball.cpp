@@ -15,6 +15,7 @@ Ball::Ball(sf::Vector2f movementVec, sf::Vector2f possition, float size)
 	shape.setPosition(possition.x, possition.y - this->ballRadius);
 
 	this->ballStuck = true;
+	this->lostBall = false;
 }
 
 Ball::Ball(float x, float y, sf::Vector2f possition, float size):
@@ -106,4 +107,12 @@ void Ball::ballRelease(){
 
 float Ball::getSize(){
 	return this->ballRadius;
+}
+
+void Ball::ballLost(){
+	this->lostBall = true;
+}
+
+bool Ball::getLostBall(){
+	return this->lostBall;
 }

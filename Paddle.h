@@ -4,7 +4,7 @@
 
 class Paddle : public sf::Drawable{
 private:
-	float paddleSpeed{ 15 };
+	float paddleSpeed{ 5 };
 	//float positionY{ 100 };
 	//sf::Vector2f paddleSize{ 1590.f, 10.f };
 	sf::Vector2f paddleSize;// { 150.f, 10.f };

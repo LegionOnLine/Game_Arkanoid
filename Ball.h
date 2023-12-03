@@ -8,7 +8,7 @@ private:
 	sf::Vector2f ballMovement;
 
 	bool ballStuck;
-
+	bool lostBall;
 	float velocity{ 1 };
 	float ballRadius;// { 25.f };
 
@@ -38,5 +38,7 @@ public:
 	//temp func
 	sf::Vector2f getposition();
 	float getSize();
+	void ballLost();
+	bool getLostBall();
 };
 
