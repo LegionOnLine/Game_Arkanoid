@@ -27,22 +27,23 @@ private:
 
 	int windowWidth{ 1800 }, windowHeight{ 1200 };
 	sf::RenderWindow* window;
+
 	std::vector<Ball*> balls;
 	float ballSize{ 25 };
+
 	Paddle* paddle;
 	sf::Vector2f paddleSize{ 150.f, 10.f };
-	std::vector<std::vector<Block*>> blocks;
 
+	std::vector<std::vector<Block*>> blocks;
 	int blocksCols{ 10 };
 	int blocksRows{ 3 };
 	int blockCount;
-
-	int playerPoints{ 0 };
-	int playerLives{ 2 };
-
 	int blockDist{ 10 };
 	float blockWidth;
 	float blockHight;
+
+	int playerPoints{ 0 };
+	int playerLives{ 2 };
 
 	bool gameOver{ false };
 

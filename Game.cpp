@@ -176,8 +176,14 @@ void Game::startNewGame(){
     //balls.emplace_back(new Ball(1.9f, 0.f, this->paddle->getPosition()));
     sf::Vector2f ballPositon = { this->paddle->getPosition().x, 
         this->paddlePositionY - this->paddleSize.y/2  };
-    balls.emplace_back(new Ball(0.f, -2.f, ballPositon, this->ballSize));
-    balls.emplace_back(new Ball(0.f, -2.f, ballPositon, this->ballSize));
+    balls.emplace_back(new Ball(90.3f, ballPositon, this->ballSize, 4.f));
+    //balls.at(0)->changeDirection(-300.f);
+
+    //balls.emplace_back(new Ball(60.f,ballPositon, this->ballSize, 5.f));
+    //balls.emplace_back(new Ball(190.f, ballPositon, this->ballSize, 1.f));
+    //balls.emplace_back(new Ball(300.f, ballPositon, this->ballSize, 5.f));
+    //balls.emplace_back(new Ball(1.f, -2.f, ballPositon, this->ballSize, 1.f));
+    //balls.emplace_back(new Ball(20.6f, -2.f, ballPositon, this->ballSize, 5.f));
     /*
     balls.emplace_back(new Ball(1.5f, -1.f, ballPositon, this->ballSize));
     balls.emplace_back(new Ball(1.5f, 1.f, ballPositon, this->ballSize));
@@ -246,10 +252,45 @@ void Game::initMainFrame(){
 
 
 bool Game::intersection(Ball* ball, int counter) {
+    /*
+    * get ball previuos and next position
+    * determine direction
+    * if ball y variable is within paddle, block, screen, frame check colision
+    * what if ball will hit frame before or after hiting other object?
+    */
     sf::Vector2f ballPrevPosition = ball->getposition();
     ball->moveBall();
     float ballPositionY = ball->getposition().y;
     float ballPositionX = ball->getposition().x;
+    float ballPreviousPositionY = ballPrevPosition.y;
+    float ballPreviousPositionX = ballPrevPosition.x;
+    bool hitWall{ false };
+    
+    bool directionUp = (ballPositionY < ballPreviousPositionY) ? true : false;
+    //std::cout << directionUp << std::endl; //1 up 0 down
+        
+    //check if wall will be hitted
+    if (ballPositionX - this->ballSize < this->mainFrameCoords.x ||
+        ballPositionX + this->ballSize > this->mainFrameCoords.z ||
+        ballPositionY - this->ballSize < this->mainFrameCoords.y)
+        hitWall = true;
+
+    if (directionUp) {
+        //going up, might hit block:
+        if (ballPositionY - this->ballSize <
+            this->mainFrameCoords.y + this->blocksRows * (this->blockDist + this->blockHight)) {
+            std::cout << "Block lvl    ";
+            //check x and verify blocks to be hit (up until ball's end move)
+        }
+    }
+    else {
+        if (ballPositionY - this->ballSize <
+            this->mainFrameCoords.y + this->blocksRows * (this->blockDist + this->blockHight))
+            std::cout << "Block lvl    ";
+
+    }
+
+
 
     float ballRangeTop = ballPositionY - this->ballSize - this->blockHight;
     float ballRangeBottom = ballPositionY + this->ballSize + this->blockHight;
@@ -352,7 +393,7 @@ void Game::update() {
         int counter{ 0 };
         bool ballLost{ false };
         for (auto ball : balls) {
-            if (intersection(ball, counter)) ballLost = true;
+            if (intersection(ball, counter)) ballLost = true;  //counter can be discarded
             counter++;
         }
         for (auto it{ balls.begin() }; it != balls.end(); ) {
