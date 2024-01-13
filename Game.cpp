@@ -176,7 +176,7 @@ void Game::startNewGame(){
     //balls.emplace_back(new Ball(1.9f, 0.f, this->paddle->getPosition()));
     sf::Vector2f ballPositon = { this->paddle->getPosition().x, 
         this->paddlePositionY - this->paddleSize.y/2  };
-    balls.emplace_back(new Ball(90.3f, ballPositon, this->ballSize, 4.f));
+    balls.emplace_back(new Ball(90.3f, ballPositon, this->ballSize, 1.f));
     //balls.at(0)->changeDirection(-300.f);
 
     //balls.emplace_back(new Ball(60.f,ballPositon, this->ballSize, 5.f));
@@ -194,6 +194,7 @@ void Game::startNewGame(){
 }
 
 void Game::initBlocks(){
+
     for (int r{ 0 }; r < this->blocksRows; r++) {
         std::vector <Block*> temp;
         for (int c{ 0 }; c < this->blocksCols; c++) {
@@ -204,6 +205,8 @@ void Game::initBlocks(){
                 this->blockWidth, 
                 this->blockHight));
             this->blockCount++;
+            this->mapBlockX.insert({ temp.at(c)->getBoundary().left, temp.at(c) });
+            this->mapBlockY.insert({ temp.at(c)->getBoundary().top, temp.at(c) });
         }
         this->blocks.push_back(temp);
     }
@@ -219,6 +222,14 @@ void Game::initWindow(){
 
     this->initMainFrame();
     this->initBlocks();
+
+    //Print map for test purpouse
+    std::cout << std::endl << "Map:" << this->mapBlockX.size() << std::endl;
+    for (auto it : this->mapBlockX) {
+        std::cout << it.first << " " << it.second << std::endl;
+    }
+    std::cout << "Map-End" << std::endl;
+
 }
 
 void Game::initMainFrame(){
@@ -250,8 +261,66 @@ void Game::initMainFrame(){
     this->blockHight = this->blockWidth * 0.3f;
 }
 
-
 bool Game::intersection(Ball* ball, int counter) {
+    float ballRange{ ball->getBallVelocity() };
+    while (ballRange > 0) {
+        //predict new possition
+        sf::Vector2f oPos{ ball->getposition() };
+        sf::Vector2f nPos{ ball->getBallMovementVector() };
+        float ballAlpha{ ball->getBallAlfa() };
+
+
+        //check if wall will be hitted
+        bool hitWall{ false };
+
+        //check direction 
+        //going UP
+        if (ballAlpha < 180.f) {
+            float wallIntersectionY{ 0 };
+            float wallIntersectionX{ 0 };
+            //MainFrame interaction
+            if (nPos.x - this->ballSize < this->mainFrameCoords.x) { //Left Wall
+                wallIntersectionY = (oPos.y - nPos.y) * (((oPos.x - this->ballSize) - this->mainFrameCoords.x) / (oPos.x - nPos.x));
+            }
+            else if (nPos.x + this->ballSize > this->mainFrameCoords.z) { //Right Wall
+                wallIntersectionY = (oPos.y - nPos.y) * ((this->mainFrameCoords.z - (oPos.x + this->ballSize)) / (nPos.x - oPos.x));
+            }
+            if (nPos.y - this->ballSize < this->mainFrameCoords.y) { //Top Wall
+                wallIntersectionX = ((nPos.x > oPos.x) ? nPos.x - oPos.x : oPos.x - nPos.x)
+                    * (((oPos.y - this->ballSize) - this->mainFrameCoords.y ) / (oPos.y - nPos.y));
+            }
+
+            //ball is in blocks range
+            if (nPos.y - this->ballSize <= this->mainFrameCoords.y + this->blocksRows * (this->blockDist + this->blockHight)) {
+                //check next block lvl if it exist bounce
+                //this->mainFrameCoords.y + this->blocksRows * (this->blockDist + this->blockHight)
+                for (int i{ this->blocksRows }; i >= 0; i--) {
+                    //bottom edge of block:
+                    /*
+                    //point to the center of the block
+                    c* (this->blockWidth + this->blockDist) + this->blockWidth/2 + this->blockDist + this->mainFrameCoords.x,
+                    r* (this->blockHight + this->blockDist) + this->blockHight/2 + this->blockDist + this->mainFrameCoords.y,
+                    */
+                    float bottomBlockEdge{ i * (this->blockDist + this->blockHight) };
+
+
+
+                }
+
+            }
+
+
+        }
+
+
+        
+
+
+        return true;
+    }
+    return false;
+}
+bool Game::intersection2(Ball* ball, int counter) {
     /*
     * get ball previuos and next position
     * determine direction
@@ -275,11 +344,11 @@ bool Game::intersection(Ball* ball, int counter) {
         ballPositionY - this->ballSize < this->mainFrameCoords.y)
         hitWall = true;
 
-    if (directionUp) {
+    if (ball->getBallAlfa() < 180.f) {
         //going up, might hit block:
         if (ballPositionY - this->ballSize <
             this->mainFrameCoords.y + this->blocksRows * (this->blockDist + this->blockHight)) {
-            std::cout << "Block lvl    ";
+            std::cout << "Ball on the Blocks lvl    ";
             //check x and verify blocks to be hit (up until ball's end move)
         }
     }
@@ -388,11 +457,37 @@ void Game::pollEvent() {
     }
 }
 
+void Game::colisionCheckPhase1(Ball *ball){
+    //get possible ball movement
+    //get list of possible collision with other objects in one axis
+    sf::Vector2f ballFirstPosition = ball->getposition();
+    sf::Vector2f ballSecondPosition = ball->predictPosition();
+    bool hitWall{ false };
+    float rangeX{ abs(ballSecondPosition.x - ballFirstPosition.x) };
+    float rangeY{ abs(ballSecondPosition.y - ballFirstPosition.y) };
+    //get x-axis
+    std::cout << "x : " << rangeX << "| " << " y : " << rangeY <<
+        " => " << (rangeX <= rangeY ? rangeX : rangeY) << std::endl;
+
+    auto range = mapBlockX.lower_bound()
+    std::cout << 
+
+    ball->moveBall();
+}
+
 void Game::update() {
     if (!this->gameOver) {
         int counter{ 0 };
         bool ballLost{ false };
         for (auto ball : balls) {
+            //check if ball movement is within specific range y
+            //use x or y (smaller) to create list of potential colision
+            //use anoter axis for determining if collision is taking place
+            //with specific object verify collision and it's aftermovement
+            //check for this object if new collision is possible (back to step 1)
+
+            colisionCheckPhase1(ball);
+
             if (intersection(ball, counter)) ballLost = true;  //counter can be discarded
             counter++;
         }
@@ -454,6 +549,7 @@ void Game::draw() {
     window->draw(*paddle);
     for (Ball* ball : balls) {
         window->draw(*ball);
+        ball->restoreMovement();
     }
     window->draw(*this->mainFrame);
 

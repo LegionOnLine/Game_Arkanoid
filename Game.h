@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <cstdlib>
 #include "Ball.h"
 #include "Paddle.h"
 #include "Block.h"
@@ -42,6 +43,9 @@ private:
 	float blockWidth;
 	float blockHight;
 
+	std::multimap<float, Block*> mapBlockX; // <left, obj.>
+	std::multimap<float, Block*> mapBlockY; // <top, obj.>
+
 	int playerPoints{ 0 };
 	int playerLives{ 2 };
 
@@ -61,8 +65,12 @@ public:
 	void initWindow();
 	void initMainFrame();
 	bool intersection(Ball* ball, int counter);
+	bool intersection2(Ball* ball, int counter);
 
 	void pollEvent();
+
+	void colisionCheckPhase1(Ball* ball);
+
 	void update();
 	void updateGui();
 	void updateGameText();

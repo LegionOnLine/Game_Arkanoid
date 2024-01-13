@@ -6,9 +6,10 @@
 class Ball : public sf::Drawable{
 private:
 	sf::CircleShape shape;
-	float alpha;
+	float alpha; //[0-360)
 	sf::Vector2f ballMovementVector; // x,y : [-1 - +1]
 	float velocity{ 1 };
+	float distanceLeftToMove{ velocity };
 
 	bool ballStuck;
 	bool lostBall;
@@ -23,30 +24,41 @@ public:
 	//Ball(sf::Vector2f movementVec, sf::Vector2f possition, float size, float velocity);
 	//Ball(float x, float y, sf::Vector2f possition, float size, float velocity);
 	
+	void restoreMovement();
 
+	//calculate ballMovementVector - x/y coords depending on angle
 	void calcMovementVector(float alpha);
 	void recalcAlpha(float alpha);
 
-	void moveBall();
+	void moveBall(); //to be removed?
+	void moveBall(float distance);
 
+
+	//collisions
 	bool ballWindowCollision(sf::RenderTarget& window);
-
 	bool ballLost(float y);
 	bool ballFrameCollision(sf::Vector3f& frame);
-	
-
 	bool ballPaddleCollision(sf::FloatRect paddle);
 	void changeDirection(float x, float y);
 	void changeDirection(float beta);
 
+
+	//ball status
 	bool isBallStuck();
 	void ballRelease();
+	void ballGetStuck();
 
-	sf::FloatRect getBoundary();
+
 	//temp func
+	sf::FloatRect getBoundary();
 	sf::Vector2f getposition();
 	float getSize();
 	void ballLost();
 	bool getLostBall();
+	float getBallAlfa();
+	float getBallVelocity();
+	sf::Vector2f getBallMovementVector();
+
+	sf::Vector2f predictPosition();
 };
 

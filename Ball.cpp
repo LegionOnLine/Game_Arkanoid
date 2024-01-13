@@ -12,6 +12,7 @@ Ball::Ball(float alpha, sf::Vector2f possition, float size, float velocity) {
 	this->velocity = velocity;
 	shape.setOrigin(this->ballRadius, this->ballRadius);
 	shape.setPosition(possition.x, possition.y - this->ballRadius);
+	this->distanceLeftToMove = this->velocity;
 
 	this->ballStuck = true;
 	this->lostBall = false;
@@ -37,6 +38,9 @@ Ball::Ball(float x, float y, sf::Vector2f possition, float size, float velocity)
 Ball::~Ball(){
 	std::cout << "ballDestr\n";
 }
+void Ball::restoreMovement() {
+	this->distanceLeftToMove = this->velocity;
+}
 
 void Ball::calcMovementVector(float alpha){
 	this->ballMovementVector.x = std::cos(alpha * 3.14159 / 180);
@@ -55,12 +59,21 @@ void Ball::recalcAlpha(float alpha) {
 	this->alpha= alpha;
 }
 
-void Ball::moveBall(){
+void Ball::moveBall(){ //to be removed?
 	if (!this->ballStuck) {
 		shape.move(this->velocity * this->ballMovementVector.x, this->velocity * this->ballMovementVector.y);
+		this->distanceLeftToMove = 0;
+	}
+}
+void Ball::moveBall(float distance) {
+	if (!this->ballStuck || this->distanceLeftToMove <= 0) {
+		float dist{ distance > this->distanceLeftToMove ? this->distanceLeftToMove : distance };
+		shape.move(dist * this->ballMovementVector.x, dist * this->ballMovementVector.y);
+		this->distanceLeftToMove -= dist;
 	}
 }
 
+//collisions
 bool Ball::ballWindowCollision(sf::RenderTarget& window) {
 	//Right & Left
 	if (((this->shape.getPosition().x + static_cast<int>(this->ballRadius)) >= window.getSize().x) ||
@@ -80,7 +93,6 @@ bool Ball::ballWindowCollision(sf::RenderTarget& window) {
 bool Ball::ballLost(float outOfScreen) {
 	//Bottom
 	if ((this->shape.getPosition().y + this->ballRadius) > outOfScreen) {
-		//this->changeDirection(1, -1);
 		return true;
 	}
 	return false;
@@ -97,7 +109,6 @@ bool Ball::ballFrameCollision(sf::Vector3f& frame) {
 	//Bottom
 	return true;
 }
-
 
 bool Ball::ballPaddleCollision(sf::FloatRect paddle){
 	//if bottome of ball is on the same lvl or bellow as paddle
@@ -121,23 +132,25 @@ void Ball::changeDirection(float beta) {
 	calcMovementVector(this->alpha);
 }
 
-//temp func
-sf::Vector2f Ball::getposition() {
-	return this->shape.getPosition();
-}
-
-
-sf::FloatRect Ball::getBoundary()
-{
-	return this->shape.getGlobalBounds();
-}
-
-
+//ball status
 bool Ball::isBallStuck() {
 	return this->ballStuck;
 }
-void Ball::ballRelease(){
+void Ball::ballRelease() {
 	if (this->ballStuck) this->ballStuck = false;
+}
+void Ball::ballGetStuck() {
+	this->ballStuck = true;
+}
+
+
+//temp func
+sf::FloatRect Ball::getBoundary() {
+	return this->shape.getGlobalBounds();
+}
+
+sf::Vector2f Ball::getposition() {
+	return this->shape.getPosition();
 }
 
 float Ball::getSize(){
@@ -150,4 +163,20 @@ void Ball::ballLost(){
 
 bool Ball::getLostBall(){
 	return this->lostBall;
+}
+
+float Ball::getBallAlfa(){
+	return this->alpha;
+}
+
+float Ball::getBallVelocity(){
+	return this->velocity;
+}
+
+sf::Vector2f Ball::getBallMovementVector() {
+	return sf::Vector2f{ this->velocity * this->ballMovementVector.x, this->velocity * this->ballMovementVector.y };
+}
+
+sf::Vector2f Ball::predictPosition() {
+	return sf::Vector2f(this->distanceLeftToMove * this->ballMovementVector.x, this->distanceLeftToMove * this->ballMovementVector.y);
 }
