@@ -4,12 +4,19 @@
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
+#include <set>
 #include "Ball.h"
 #include "Paddle.h"
 #include "Block.h"
 
+
 class Game {
 private:
+
+
+	int windowWidth{ 1800 }, windowHeight{ 1200 };
+	sf::RenderWindow* window;
+
 
 	//Text Objects
 	sf::Font font;
@@ -18,16 +25,20 @@ private:
 	sf::Text textGame;
 
 	//Frame:
+	sf::Color frameColor{sf::Color::Blue};
+	float mainFrameWidth{ 10. };
+	Block* leftWall;
+	Block* topWall;
+	Block* rightWall;
+
+
+	std::vector<Block*> walls; // Left, Top, Right
+	
 	sf::VertexArray* mainFrame;
 	sf::Vector3f mainFrameCoords; // Left, Top, Right
-	float mainFrameWidth;
 	float mainFrameBottom;
-	float paddlePositionY;
-	sf::Color frameColor;
-	
 
-	int windowWidth{ 1800 }, windowHeight{ 1200 };
-	sf::RenderWindow* window;
+	float paddlePositionY;
 
 	std::vector<Ball*> balls;
 	float ballSize{ 25 };
@@ -43,8 +54,9 @@ private:
 	float blockWidth;
 	float blockHight;
 
-	std::multimap<float, Block*> mapBlockX; // <left, obj.>
-	std::multimap<float, Block*> mapBlockY; // <top, obj.>
+	// <<left,top>, obj>
+	std::map<std::pair<float,float>, Block*> mapBlock;
+	
 
 	int playerPoints{ 0 };
 	int playerLives{ 2 };
@@ -52,6 +64,7 @@ private:
 	bool gameOver{ false };
 
 public:
+
 	Game();
 	~Game();
 
@@ -69,7 +82,11 @@ public:
 
 	void pollEvent();
 
-	void colisionCheckPhase1(Ball* ball);
+	void colisionCheckPhase1(Ball *ball);
+	void colisionCheckPhaseX(Ball *ball, std::set<float> *rangeX, std::multimap<std::pair<float, float>, Block*> *secondMap);
+	void colisionCheckPhaseY(Ball *ball, std::set<float> *rangeY, std::multimap<std::pair<float, float>, Block*> *secondMap);
+	void colisionCheckPhase2(Ball* ball, std::set<float>* rangeX, std::set<float>* rangeY, std::multimap<std::pair<float, float>, Block*>* secondMap);
+
 
 	void update();
 	void updateGui();

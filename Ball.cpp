@@ -150,6 +150,8 @@ sf::FloatRect Ball::getBoundary() {
 }
 
 sf::Vector2f Ball::getposition() {
+	//std::cout << shape.getPosition().x << " ";
+	//std::cout << shape.getPosition().y << std::endl;
 	return this->shape.getPosition();
 }
 
@@ -174,9 +176,22 @@ float Ball::getBallVelocity(){
 }
 
 sf::Vector2f Ball::getBallMovementVector() {
-	return sf::Vector2f{ this->velocity * this->ballMovementVector.x, this->velocity * this->ballMovementVector.y };
+	return sf::Vector2f{
+		this->velocity * this->ballMovementVector.x,
+		this->velocity * this->ballMovementVector.y };
 }
 
 sf::Vector2f Ball::predictPosition() {
-	return sf::Vector2f(this->distanceLeftToMove * this->ballMovementVector.x, this->distanceLeftToMove * this->ballMovementVector.y);
+
+	//std::cout << this->distanceLeftToMove * this->ballMovementVector.y << std::endl;
+	//std::cout <<"distanceLeftToMove" << this->distanceLeftToMove  << std::endl;
+	//
+	//std::cout << "ballMovementVector.x" << this->ballMovementVector.x << std::endl;
+	//
+	//std::cout << "ballMovementVector.y" << this->ballMovementVector.y << std::endl;
+	//
+	//std::cout << this->distanceLeftToMove * this->ballMovementVector.x << " ";
+	return sf::Vector2f(
+		this->shape.getPosition().x + this->distanceLeftToMove * this->ballMovementVector.x,
+		this->shape.getPosition().y + this->distanceLeftToMove * this->ballMovementVector.y);
 }

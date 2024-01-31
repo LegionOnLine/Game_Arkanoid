@@ -1,5 +1,8 @@
 #include "Game.h"
 
+
+
+
 template <class T1, class T2> bool intersection(T1* A, T2* B) {
     return A->getBoundary().left + A->getBoundary().width >= B->getBoundary().left &&
         A->getBoundary().left <= B->getBoundary().left + B->getBoundary().width &&
@@ -127,7 +130,7 @@ template <class T> int intersectionDir(Ball* ball, T* t) {
 Game::Game(){
     this->initWindow();
     this->initGUI();
-    std::cout << this->mainFrameCoords.x << std::endl;;
+    //std::cout << this->mainFrameCoords.x << std::endl;;
     this->paddle = new Paddle(
         (this->mainFrameCoords.z - this->mainFrameCoords.x)/2,
         this->paddlePositionY,
@@ -144,7 +147,6 @@ Game::~Game(){
 }
 
 bool Game::GameWorking() {
-
     return this->window->isOpen();
 }
 
@@ -176,8 +178,9 @@ void Game::startNewGame(){
     //balls.emplace_back(new Ball(1.9f, 0.f, this->paddle->getPosition()));
     sf::Vector2f ballPositon = { this->paddle->getPosition().x, 
         this->paddlePositionY - this->paddleSize.y/2  };
-    balls.emplace_back(new Ball(90.3f, ballPositon, this->ballSize, 1.f));
+    balls.emplace_back(new Ball(60.3f, ballPositon, this->ballSize, 2.f));
     //balls.at(0)->changeDirection(-300.f);
+    //balls.emplace_back(new Ball(300.f, sf::Vector2f (20., 20.), this->ballSize, 5.f));
 
     //balls.emplace_back(new Ball(60.f,ballPositon, this->ballSize, 5.f));
     //balls.emplace_back(new Ball(190.f, ballPositon, this->ballSize, 1.f));
@@ -194,19 +197,26 @@ void Game::startNewGame(){
 }
 
 void Game::initBlocks(){
+    //Blocks size
+    this->blockWidth = ((this->mainFrameCoords.z - this->mainFrameWidth) - ((this->blocksCols + 1) * this->blockDist)) / this->blocksCols;
+    this->blockHight = this->blockWidth * 0.3f;
 
     for (int r{ 0 }; r < this->blocksRows; r++) {
         std::vector <Block*> temp;
         for (int c{ 0 }; c < this->blocksCols; c++) {
-            temp.emplace_back( new Block(
+            temp.emplace_back(new Block(
                 //point to the center of the block
-                c* (this->blockWidth + this->blockDist) + this->blockWidth/2 + this->blockDist + this->mainFrameCoords.x,
-                r* (this->blockHight + this->blockDist) + this->blockHight/2 + this->blockDist + this->mainFrameCoords.y,
-                this->blockWidth, 
-                this->blockHight));
+                c * (this->blockWidth + this->blockDist) + this->blockWidth / 2 + this->blockDist + this->mainFrameWidth,
+                r * (this->blockHight + this->blockDist) + this->blockHight / 2 + this->blockDist + this->mainFrameWidth,
+                this->blockWidth,
+                this->blockHight,
+                1));
             this->blockCount++;
-            this->mapBlockX.insert({ temp.at(c)->getBoundary().left, temp.at(c) });
-            this->mapBlockY.insert({ temp.at(c)->getBoundary().top, temp.at(c) });
+            this->mapBlock.emplace(
+                std::make_pair(
+                    temp.at(c)->getBoundary().left, 
+                    temp.at(c)->getBoundary().top), 
+                temp.at(c));
         }
         this->blocks.push_back(temp);
     }
@@ -220,45 +230,33 @@ void Game::initWindow(){
     this->window->setFramerateLimit(144);
     this->window->setVerticalSyncEnabled(false);
 
-    this->initMainFrame();
-    this->initBlocks();
-
-    //Print map for test purpouse
-    std::cout << std::endl << "Map:" << this->mapBlockX.size() << std::endl;
-    for (auto it : this->mapBlockX) {
-        std::cout << it.first << " " << it.second << std::endl;
-    }
-    std::cout << "Map-End" << std::endl;
-
-}
-
-void Game::initMainFrame(){
-    this->frameColor = sf::Color::Blue;
-    this->mainFrameCoords.x = 10.;
-    this->mainFrameCoords.y = 10.;
-    this->mainFrameCoords.z = this->window->getSize().x - 200.;
+    this->mainFrameCoords.x = this->mainFrameWidth;
+    this->mainFrameCoords.y = this->mainFrameWidth;
+    this->mainFrameCoords.z = this->window->getSize().x * 0.9;
 
     this->mainFrameBottom = this->window->getSize().y - 100.;
     this->paddlePositionY = this->mainFrameBottom;
-    this->mainFrameWidth = 10;
 
-    this->mainFrame = new sf::VertexArray(sf::TriangleStrip);
+    this->initMainFrame();
+    this->initBlocks();
 
-    //this->mainFrame->append(sf::Vertex(sf::Vector2f(this->mainFrameCoords.x - this->mainFrameWidth, this->mainFrameBottom), this->frameColor)); //1
-    this->mainFrame->append(sf::Vertex(sf::Vector2f(this->mainFrameCoords.x - this->mainFrameWidth, this->windowHeight), this->frameColor)); //1
-    //this->mainFrame->append(sf::Vertex(sf::Vector2f(this->mainFrameCoords.x, this->mainFrameBottom), this->frameColor)); //2
-    this->mainFrame->append(sf::Vertex(sf::Vector2f(this->mainFrameCoords.x, this->windowHeight), this->frameColor)); //2
-    this->mainFrame->append(sf::Vertex(sf::Vector2f(this->mainFrameCoords.x - this->mainFrameWidth, this->mainFrameCoords.y - this->mainFrameWidth), this->frameColor)); //3
-    this->mainFrame->append(sf::Vertex(sf::Vector2f(this->mainFrameCoords.x, this->mainFrameCoords.y), this->frameColor)); //4
-    this->mainFrame->append(sf::Vertex(sf::Vector2f(this->mainFrameCoords.z + this->mainFrameWidth, this->mainFrameCoords.y - this->mainFrameWidth), this->frameColor)); //5
-    this->mainFrame->append(sf::Vertex(sf::Vector2f(this->mainFrameCoords.z, this->mainFrameCoords.y), this->frameColor)); //6
-    //this->mainFrame->append(sf::Vertex(sf::Vector2f(this->mainFrameCoords.z + this->mainFrameWidth, this->mainFrameBottom), this->frameColor)); //7
-    this->mainFrame->append(sf::Vertex(sf::Vector2f(this->mainFrameCoords.z + this->mainFrameWidth, this->windowHeight), this->frameColor)); //7
-    //this->mainFrame->append(sf::Vertex(sf::Vector2f(this->mainFrameCoords.z, this->mainFrameBottom), this->frameColor)); //8
-    this->mainFrame->append(sf::Vertex(sf::Vector2f(this->mainFrameCoords.z, this->windowHeight), this->frameColor)); //8
-    //Blocks size
-    this->blockWidth = ((this->mainFrameCoords.z - this->mainFrameCoords.x - this->mainFrameWidth) - (this->blocksCols * this->blockDist)) / this->blocksCols;
-    this->blockHight = this->blockWidth * 0.3f;
+
+    //Print map for test purpouse
+    //std::cout << std::endl << "Map:" << this->mapBlock.size() << std::endl;
+    //for (auto it : this->mapBlock) {
+    //    std::cout << "L:" << it.first.first << " T:" << it.first.second << " O:" << it.second << std::endl;
+    //}
+    //std::cout << "Map-End" << std::endl;
+  //  std::cout << "x:" << this->mainFrameCoords.x << " y:" << this->mainFrameCoords.y << " z:" << this->mainFrameCoords.z << std::endl;
+}
+
+void Game::initMainFrame(){
+    //Left: x,y,w,h
+    this->leftWall = new Block(0,0, this->mainFrameWidth, this->window->getSize().y, -1, this->frameColor);
+    this->topWall = new Block(0,0, this->mainFrameCoords.z, this->mainFrameWidth, -1, this->frameColor);
+    this->rightWall = new Block(this->mainFrameCoords.z,0, this->mainFrameWidth, this->window->getSize().y, -1,this->frameColor);
+
+    
 }
 
 bool Game::intersection(Ball* ball, int counter) {
@@ -457,22 +455,165 @@ void Game::pollEvent() {
     }
 }
 
-void Game::colisionCheckPhase1(Ball *ball){
-    //get possible ball movement
-    //get list of possible collision with other objects in one axis
+
+void Game::colisionCheckPhaseX(Ball *ball, std::set<float>* rangeX, std::multimap<std::pair<float, float>, Block*> *secondMap){
+    bool hitWall{ false };
+
+    //if it's new list use 0 in x-coords, -1 is reserved for walls etc.
+    if (!secondMap->empty()) { //list is not empty
+        for (auto sm : *secondMap) {
+            // <<colisionX,colisionY>, obj>
+            // if map is filled go through each objects
+            // if object is too far remove it
+            // if object is coliding, fill up X-coords
+            if (sm.first.second != -1) { //beside walls - check key
+                //std::cout << "*";
+                if ((sm.second->getBoundary().left <= *rangeX->begin() && sm.second->getBoundary().left + sm.second->getBoundary().width > *rangeX->begin()) ||
+                    (sm.second->getBoundary().left >= *rangeX->begin() && sm.second->getBoundary().left <= *rangeX->rbegin())) {
+                    //detecting direction of ball movement and therefore store top or bottom coords
+                    float collisionWall{};
+                    if (ball->getBallAlfa() >= 90 && ball->getBallAlfa() < 270) {
+                        collisionWall = sm.second->getBoundary().left;
+                    }
+                    else {
+                        collisionWall = sm.second->getBoundary().left + sm.second->getBoundary().width;
+                    }
+                    secondMap->insert({ std::make_pair(collisionWall,sm.first.second),sm.second });
+                }
+                secondMap->erase(sm.first);
+            }
+        }
+    }
+    else {
+        // <<oX,oY>, obj>
+        //std::cout << ">>";
+        for (auto m : this->mapBlock) {
+            //going through all blocks defined during initialization process:
+            if ((m.second->getBoundary().left <= *rangeX->begin() && m.second->getBoundary().left + m.second->getBoundary().width > *rangeX->begin()) ||
+                (m.second->getBoundary().left > *rangeX->begin() && m.second->getBoundary().left < *rangeX->rbegin())) {
+                //detecting direction of ball movement and therefore store top or bottom coords
+                float collisionWall{};
+                //if (ball->getBallAlfa() >= 90 && ball->getBallAlfa() < 270) {
+                    collisionWall = m.second->getBoundary().left;
+                //}
+                //else {
+                //    collisionWall = m.second->getBoundary().left + m.second->getBoundary().width;
+                //}
+                secondMap->insert({ std::make_pair(collisionWall,0),m.second });
+                //std::cout << ">>";
+
+            }
+            if (m.first.first > *rangeX->rbegin()) break;
+        }
+    }
+    std::cout << std::endl << secondMap->size() << "*";
+    //LWall
+    //if (this->leftWall->getBoundary().left + this->leftWall->getBoundary().width >= *rangeX->begin() - ball->getSize()) {
+    //    secondMap->insert({ std::make_pair(this->leftWall->getBoundary().left + this->leftWall->getBoundary().width, -1.) , this->leftWall });
+    //}
+    ////RWall
+    //if (this->rightWall->getBoundary().left <= *rangeX->rbegin() + ball->getSize()) {
+    //    secondMap->insert({ std::make_pair(this->rightWall->getBoundary().left, -1.) , this->rightWall });
+    //}
+}
+
+void Game::colisionCheckPhaseY(Ball* ball, std::set<float>* rangeY, std::multimap<std::pair<float, float>, Block*>* secondMap) {
+    bool hitTopWall{ false };
+    bool hitPaddle{ false };
+
+
+    //if it's new list use 0 in x-coords, -1 is reserved for walls etc.
+    if (!secondMap->empty()) { //list is not empty
+        for (auto sm : *secondMap) {
+            // <<cX,cY>, obj>
+            // if map is filled go through each objects
+            // if object is too far remove it
+            // if object is coliding, go to next object
+            if (sm.first.second != -1) { //beside walls - check key
+                //std::cout << "*";
+                if ((sm.second->getBoundary().top <= *rangeY->begin() && sm.second->getBoundary().top + sm.second->getBoundary().height > *rangeY->begin()) ||
+                    (sm.second->getBoundary().top >= *rangeY->begin() && sm.second->getBoundary().top <= *rangeY->rbegin())) {
+                    //detecting direction of ball movement and therefore store top or bottom coords
+                    float collisionWall{};
+                    if (ball->getBallAlfa() >= 0 && ball->getBallAlfa() < 180) {
+                        collisionWall = sm.second->getBoundary().top + sm.second->getBoundary().height;
+                    }
+                    else {
+                        collisionWall = sm.second->getBoundary().top;
+                    }
+                    secondMap->insert({ std::make_pair(sm.first.first,collisionWall),sm.second });
+                }
+                secondMap->erase(sm.first);
+            }
+        }
+    }
+    else {
+        // <<oX,oY>, obj>
+        //std::cout << ">>";
+        for (auto m : this->mapBlock) {
+            //going through all blocks defined during initialization process:
+            if ((m.second->getBoundary().top <= *rangeY->begin() && m.second->getBoundary().top + this->blockWidth > *rangeY->begin()) ||
+                (m.second->getBoundary().top > *rangeY->begin() && m.second->getBoundary().top < *rangeY->rbegin())) {
+                //detecting direction of ball movement and therefore store top or bottom coords
+                float collisionWall{};
+                if (ball->getBallAlfa() >= 0 && ball->getBallAlfa() < 180) {
+                    collisionWall = m.second->getBoundary().top + m.second->getBoundary().height;
+                }
+                else {
+                    collisionWall = m.second->getBoundary().top;
+                }
+                secondMap->insert({ std::make_pair(-99.,collisionWall),m.second });
+            }
+            if (m.first.second > *rangeY->rbegin()) break;
+        }
+    }
+    //TopWall
+    if (this->topWall->getBoundary().height >= *rangeY->begin() - ball->getSize()) {
+        secondMap->insert({ std::make_pair(-1.,this->topWall->getBoundary().top + this->topWall->getBoundary().height) , this->topWall });
+    }
+}
+void Game::colisionCheckPhase2(Ball* ball, std::set<float>* rangeX, std::set<float>* rangeY, std::multimap<std::pair<float, float>, Block*>* secondMap) {
+    std::cout << std::endl<<  secondMap->size() << "-";
+    for (auto sm : *secondMap) {
+        //std::cout << sm.second->getId() << std::endl;
+        sm.second->setcolor(sf::Color::White);////////
+    }
+}
+void Game::colisionCheckPhase1(Ball* ball) {
+    std::multimap<std::pair<float, float>, Block*>* secondMap = new (std::multimap<std::pair<float, float>, Block*>);
     sf::Vector2f ballFirstPosition = ball->getposition();
     sf::Vector2f ballSecondPosition = ball->predictPosition();
-    bool hitWall{ false };
-    float rangeX{ abs(ballSecondPosition.x - ballFirstPosition.x) };
-    float rangeY{ abs(ballSecondPosition.y - ballFirstPosition.y) };
-    //get x-axis
-    std::cout << "x : " << rangeX << "| " << " y : " << rangeY <<
-        " => " << (rangeX <= rangeY ? rangeX : rangeY) << std::endl;
+    std::set<float> rangeX{ ballFirstPosition.x, ballSecondPosition.x };
+    std::set<float> rangeY{ ballFirstPosition.y, ballSecondPosition.y };
+    if (*rangeX.rbegin() > 0 && *rangeY.rbegin() > 0) {
+       /*
+        std::cout << std::endl;
 
-    auto range = mapBlockX.lower_bound()
-    std::cout << 
-
+        std::cout << "X-";
+        for (auto a : rangeX) {
+            std::cout << a << " ";
+        }
+        std::cout << "Y-";
+        for (auto a : rangeY) {
+            std::cout << a << " ";
+        }
+        std::cout << std::endl;
+        */
+        colisionCheckPhaseX(ball, &rangeX, secondMap);
+        colisionCheckPhaseY(ball, &rangeY, secondMap);
+        if(!secondMap->empty()) colisionCheckPhase2(ball, &rangeX, &rangeY, secondMap);
+        /*
+        std::cout << std::endl;
+        if (secondMap->size() > 0) { //<<cX,cY>, obj>
+            std::cout << secondMap->size() << std::endl;
+            for (auto a : *secondMap) {
+                std::cout << " X: " << a.first.first << ", Y: " << a.first.second << std::endl;
+            }
+        }
+        */
+    }
     ball->moveBall();
+    delete secondMap;
 }
 
 void Game::update() {
@@ -540,6 +681,13 @@ void Game::draw() {
     window->clear();
 
     this->renderGui();
+    //for (auto w : walls) {
+    //    window->draw(*w);
+    //}
+    window->draw(*this->leftWall);
+    window->draw(*this->topWall);
+    window->draw(*this->rightWall);
+
     for (auto r : blocks) {
         for (auto b : r) {
             if (b->printableObj())
@@ -551,7 +699,9 @@ void Game::draw() {
         window->draw(*ball);
         ball->restoreMovement();
     }
-    window->draw(*this->mainFrame);
+    //window->draw(*this->mainFrame);
 
     window->display();
+   //std::cout << "x:" << this->mainFrameCoords.x << " y:" << this->mainFrameCoords.y << " z:" << this->mainFrameCoords.z << std::endl;
+
 }
