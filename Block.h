@@ -11,11 +11,12 @@ private:
 	int hpMax;
 	int hp;
 	int points;
+	int id;
 	static int i;
 
 public:
-	static int getId() {
-		return i;
+	int getId() {
+		return id;
 	};
 	void draw(sf::RenderTarget& target, sf::RenderStates state) const;
 	Block(float x, float y, float w, float h, int hp, sf::Color c = sf::Color::Red);
