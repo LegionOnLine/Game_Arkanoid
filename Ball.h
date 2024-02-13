@@ -25,6 +25,7 @@ public:
 	//Ball(float x, float y, sf::Vector2f possition, float size, float velocity);
 	
 	void restoreMovement();
+	float getDistanceLeftToMove();
 
 	//calculate ballMovementVector - x/y coords depending on angle
 	void calcMovementVector(float alpha);

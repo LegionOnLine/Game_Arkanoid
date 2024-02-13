@@ -85,8 +85,13 @@ public:
 	void colisionAlgorithm(Ball *ball);
 	void colisionCheckPhase1X(Ball *ball, std::set<float> *rangeX, std::multimap<std::pair<float, float>, Block*> *secondMap, bool *secondAxis);
 	void colisionCheckPhase1Y(Ball *ball, std::set<float> *rangeY, std::multimap<std::pair<float, float>, Block*> *secondMap, bool *secondAxis);
-	void colisionCheckPhase2(Ball* ball, std::set<float>* rangeX, std::set<float>* rangeY, std::multimap<std::pair<float, float>, Block*>* secondMap);
+	//void colisionCheckPhase2(Ball* ball, std::set<float>* rangeX, std::set<float>* rangeY, std::multimap<std::pair<float, float>, Block*>* secondMap);
+	void colisionCheckPhase2(Ball* ball, float endPositionX, float endPositionY, std::multimap<std::pair<float, float>, Block*>* secondMap, std::set<float>* rangeX, std::set<float>* rangeY);
 
+	float calculateDistance(float x, float y, float a, float b);
+	float calculateDistanceX(float xp, float yp, float xs, float ys, float yc);
+	float calculateDistanceY(float xp, float yp, float xs, float ys, float xc);
+	float calculateCoords(float startPositionX, float startPositionY, float endPositionX, float endPositionY, float collisionPositionX, float collisionPositionY);
 
 	void update();
 	void updateGui();
