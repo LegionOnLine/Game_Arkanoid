@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-class Block : public sf::Drawable{
+class Block : public sf::Drawable {
 private:
 	sf::RectangleShape shape;
 	sf::Vector2f blockSize{ 60,20 };
@@ -20,6 +20,7 @@ public:
 	};
 	void draw(sf::RenderTarget& target, sf::RenderStates state) const;
 	Block(float x, float y, float w, float h, int hp, sf::Color c = sf::Color::Red);
+	Block();
 	virtual ~Block();
 
 	void initBlock(float x, float y, float w, float h, int hp, sf::Color c);

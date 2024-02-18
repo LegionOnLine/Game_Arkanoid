@@ -5,7 +5,7 @@ int Block::i = 0;
 void Block::draw(sf::RenderTarget& target, sf::RenderStates state) const{
 	target.draw(this->shape, state);
 }
-
+Block::Block(){}
 Block::Block(float x, float y, float w, float h, int hp, sf::Color c){
 	this->initBlock(x, y, w, h, hp, c);
 }
@@ -29,7 +29,7 @@ void Block::initBlock(float x, float y, float w, float h, int hp, sf::Color c){
 	this->points = hp;
 	this->id = i;
 	++i;
-	std::cout << i << std::endl;
+	//std::cout << i << std::endl;
 }
 
 sf::FloatRect Block::getBoundary(){

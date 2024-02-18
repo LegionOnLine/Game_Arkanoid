@@ -8,6 +8,7 @@
 #include "Ball.h"
 #include "Paddle.h"
 #include "Block.h"
+#include "Bouncing.h"
 
 
 class Game {
@@ -86,7 +87,7 @@ public:
 	void colisionCheckPhase1X(Ball *ball, std::set<float> *rangeX, std::multimap<std::pair<float, float>, Block*> *secondMap, bool *secondAxis);
 	void colisionCheckPhase1Y(Ball *ball, std::set<float> *rangeY, std::multimap<std::pair<float, float>, Block*> *secondMap, bool *secondAxis);
 	//void colisionCheckPhase2(Ball* ball, std::set<float>* rangeX, std::set<float>* rangeY, std::multimap<std::pair<float, float>, Block*>* secondMap);
-	void colisionCheckPhase2(Ball* ball, float endPositionX, float endPositionY, std::multimap<std::pair<float, float>, Block*>* secondMap, std::set<float>* rangeX, std::set<float>* rangeY);
+	float colisionCheckPhase2(Ball* ball, float endPositionX, float endPositionY, std::multimap<std::pair<float, float>, Block*>* secondMap, std::set<float>* rangeX, std::set<float>* rangeY);
 
 	float calculateDistance(float x, float y, float a, float b);
 	float calculateDistanceX(float xp, float yp, float xs, float ys, float yc);

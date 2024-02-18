@@ -1,8 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "Block.h"
 
-
-class Paddle : public sf::Drawable{
+class Paddle : public sf::Drawable, public Block {
 private:
 	float paddleSpeed{ 5 };
 	//float positionY{ 100 };
