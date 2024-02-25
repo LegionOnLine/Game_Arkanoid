@@ -9,7 +9,7 @@ private:
 	float alpha; //[0-360)
 	sf::Vector2f ballMovementVector; // x,y : [-1 - +1]
 	float velocity{ 1 };
-	float distanceLeftToMove{ velocity };
+	float distanceLeftToMove;// { velocity };
 
 	bool ballStuck;
 	bool lostBall;
@@ -25,13 +25,12 @@ public:
 	//Ball(float x, float y, sf::Vector2f possition, float size, float velocity);
 	
 	void restoreMovement();
-	float getDistanceLeftToMove();
 
 	//calculate ballMovementVector - x/y coords depending on angle
 	void calcMovementVector(float alpha);
 	void recalcAlpha(float alpha);
 
-	void moveBall(); //to be removed?
+	//void moveBall(); //to be removed?
 	void moveBall(float distance);
 
 
@@ -51,6 +50,8 @@ public:
 
 
 	//temp func
+	float getBallRadius();
+	float getDistanceLeftToMove();
 	sf::FloatRect getBoundary();
 	sf::Vector2f getposition();
 	float getSize();

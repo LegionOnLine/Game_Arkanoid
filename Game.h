@@ -39,10 +39,12 @@ private:
 	sf::Vector3f mainFrameCoords; // Left, Top, Right
 	float mainFrameBottom;
 
-	float paddlePositionY;
+	float paddleLevel;
 
 	std::vector<Ball*> balls;
-	float ballSize{ 25 };
+	float ballSize{ 150/2 };
+	float ballSpeed{ 5 };
+	float alpha{160.0};
 
 	Paddle* paddle;
 	sf::Vector2f paddleSize{ 150.f, 10.f };
@@ -66,6 +68,10 @@ private:
 
 public:
 
+	sf::CircleShape p00, p01, p10, p11;
+	float r{ 5 };
+
+
 	Game();
 	~Game();
 
@@ -88,6 +94,7 @@ public:
 	void colisionCheckPhase1Y(Ball *ball, std::set<float> *rangeY, std::multimap<std::pair<float, float>, Block*> *secondMap, bool *secondAxis);
 	//void colisionCheckPhase2(Ball* ball, std::set<float>* rangeX, std::set<float>* rangeY, std::multimap<std::pair<float, float>, Block*>* secondMap);
 	float colisionCheckPhase2(Ball* ball, float endPositionX, float endPositionY, std::multimap<std::pair<float, float>, Block*>* secondMap, std::set<float>* rangeX, std::set<float>* rangeY);
+	//void colisionCheckPaddle(Ball* ball, );
 
 	float calculateDistance(float x, float y, float a, float b);
 	float calculateDistanceX(float xp, float yp, float xs, float ys, float yc);

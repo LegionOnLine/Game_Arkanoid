@@ -41,6 +41,9 @@ Ball::~Ball(){
 void Ball::restoreMovement() {
 	this->distanceLeftToMove = this->velocity;
 }
+float Ball::getBallRadius(){
+	return this->ballRadius;
+}
 float Ball::getDistanceLeftToMove() {
 	return this->distanceLeftToMove;
 }
@@ -62,12 +65,12 @@ void Ball::recalcAlpha(float alpha) {
 	this->alpha= alpha;
 }
 
-void Ball::moveBall(){ //to be removed?
-	if (!this->ballStuck) {
-		shape.move(this->distanceLeftToMove * this->ballMovementVector.x, this->distanceLeftToMove * this->ballMovementVector.y);
-		this->distanceLeftToMove = 0;
-	}
-}
+//void Ball::moveBall(){ //to be removed?
+//	if (!this->ballStuck) {
+//		shape.move(this->distanceLeftToMove * this->ballMovementVector.x, this->distanceLeftToMove * this->ballMovementVector.y);
+//		this->distanceLeftToMove = 0;
+//	}
+//}
 void Ball::moveBall(float distance) {
 	if (!this->ballStuck || this->distanceLeftToMove <= 0) {
 		float dist{ distance > this->distanceLeftToMove ? this->distanceLeftToMove : distance };
