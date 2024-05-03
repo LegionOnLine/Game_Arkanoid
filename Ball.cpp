@@ -51,8 +51,8 @@ float Ball::getDistanceLeftToMove() {
 void Ball::calcMovementVector(float alpha){
 	this->ballMovementVector.x = std::cos(alpha * 3.14159 / 180);
 	this->ballMovementVector.y = std::sin((alpha+180.f) * 3.14159 / 180);
-	std::cout << "alfa: " << alpha << " - [" << this->ballMovementVector.x << "," << this->ballMovementVector.y << std::endl;
-	std::cout << std::acos(this->ballMovementVector.x) * 180 / 3.1415 << std::endl;
+	//std::cout << "alfa: " << alpha << " - [" << this->ballMovementVector.x << "," << this->ballMovementVector.y << std::endl;
+	//std::cout << std::acos(this->ballMovementVector.x) * 180 / 3.1415 << std::endl;
 }
 
 void Ball::recalcAlpha(float alpha) {
@@ -147,6 +147,7 @@ void Ball::ballRelease() {
 }
 void Ball::ballGetStuck() {
 	this->ballStuck = true;
+	this->restoreMovement();
 }
 
 

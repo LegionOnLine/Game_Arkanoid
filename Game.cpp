@@ -2,131 +2,6 @@
 
 
 
-
-template <class T1, class T2> bool intersection(T1* A, T2* B) {
-    return A->getBoundary().left + A->getBoundary().width >= B->getBoundary().left &&
-        A->getBoundary().left <= B->getBoundary().left + B->getBoundary().width &&
-        A->getBoundary().top + A->getBoundary().height >= B->getBoundary().top &&
-        A->getBoundary().top <= B->getBoundary().top + B->getBoundary().height;
-}
-
-template <class T> int intersectByLine(Ball* ball, T* t, sf::Vector2f ballPrevPosition) {
-    float ballXp = ballPrevPosition.x;
-    float ballYp = ballPrevPosition.y;
-    float ballX = ball->getposition().x;
-    float ballY = ball->getposition().y;
-
-    float tTop = t->getBoundary().top;
-    float tBottom = t->getBoundary().top + t->getBoundary().height;
-    float tLeft = t->getBoundary().left;
-    float tRight = t->getBoundary().left + t->getBoundary().width;
-
-
-    // (ballXp - x) / (ballXp- ballX)   = (ballYp - y) (ballYp - ballY)
-
-    if ((ballYp - ballY) == 0) return -1; //ball didnt move ?
-    //if (ballY > tTop - 10 && ballY < tTop + 20) 
-    {
-        int x = ballXp - (((ballYp - tTop) / (ballYp - ballY)) * (ballXp - ballX));
-        //std::cout << x;
-        if (x >= tLeft && x <= tRight) {
-            return 1;
-        }
-    }
-    return -1;
-}
-
-template <class T> int intersectionDir(Ball* ball, T* t) {
-    float ballX = ball->getposition().x;
-    float ballY = ball->getposition().y;
-    float ballSize = ball->getSize();
-    // this->ballSize;
-    float tTop = t->getBoundary().top;
-    float tBottom = t->getBoundary().top + t->getBoundary().height;
-    float tLeft = t->getBoundary().left;
-    float tRight = t->getBoundary().left + t->getBoundary().width;
-
-    if (ballY > tTop && ballY < tBottom) {
-        //( )[===]  left
-        if (ballX < tLeft && tLeft-ballX < ballSize){
-        //    std::cout << "left";
-            return 1;
-        }
-        //[===]( )  right
-        if (ballX > tRight && ballX - tRight < ballSize) {
-          //  std::cout << "right";
-            return 1;
-        }
-    }
-    else if (ballY + ballSize >= tTop) {
-        //   ( )    top
-        //  [===]
-        if (ballX - ballSize >= tLeft && ballX + ballSize <= tRight) {
-            //BallHitDirectlyFrom Top
-            //std::cout << "Top";
-            return 1;
-        }
-        //   ( )    topleft
-        //    [===]
-        else if (ballX + ballSize >= tLeft && ballX - ballSize <= tLeft) {
-            if (ballSize * ballSize < (
-                (ballY - tTop) * (ballY - tTop) +
-                (ballX - tLeft) * (ballX - tLeft)
-                )) {
-              //  std::cout << "Top Left";
-                return 1;
-            }
-
-        }
-        //       ( )    topright
-        //    [===]
-        else if (ballX + ballSize >= tRight && ballX - ballSize <= tRight) {
-            if (ballSize * ballSize < (
-                (ballY - tTop) * (ballY - tTop) +
-                (ballX - tRight) * (ballX - tRight)
-                )) {
-                //std::cout << "Top Right";
-                return 1;
-            }
-        }
-        return -1;
-
-    }
-    else if (ballY - ballSize <= tBottom) {
-        //  [===]
-        //   ( )    bottom
-        if (ballX - ballSize >= tLeft && ballX + ballSize <= tRight) {
-           // std::cout << "Bottom";
-            return 1;
-        }
-        //  [===]
-        // ( )    bottomleft
-        else if (ballX + ballSize >= tLeft && ballX - ballSize <= tLeft) {
-            if ((ballSize * ballSize) < (
-                (ballY - tBottom) * (ballY - tBottom) +
-                (ballX - tLeft) * (ballX - tLeft)
-                )) {
-             //   std::cout << "bottom left";
-                return 1;
-            }
-        }
-        //  [===]
-        //     ( )    bottomright
-        else if (ballX + ballSize >= tRight && ballX - ballSize <= tRight) {
-            if (ballSize * ballSize < (
-                (ballY - tBottom) * (ballY - tBottom) +
-                (ballX - tRight) * (ballX - tRight)
-                )) {
-               // std::cout << "bottom Right";
-                return 1;
-            }
-        }
-    }
-    return -1;
-    
-        
-}
-
 Game::Game(){
     this->initWindow();
     this->initGUI();
@@ -201,6 +76,20 @@ void Game::initBlocks(){
     this->blockWidth = ((this->mainFrameCoords.z - this->mainFrameWidth) - ((this->blocksCols + 1) * this->blockDist)) / this->blocksCols;
     this->blockHight = this->blockWidth * 0.3f;
 
+    std::vector <Block*> temp;
+    temp.emplace_back(new Block(
+        750,//1025,
+        500,//500
+        this->blockWidth,
+        this->blockHight,
+        1));
+    this->blocks.push_back(temp);
+    this->mapBlock.emplace(
+        std::make_pair( temp.at(0)->getBoundary().left, 
+            temp.at(0)->getBoundary().top),
+        temp.at(0));
+
+    /*
     for (int r{ 0 }; r < this->blocksRows; r++) {
         std::vector <Block*> temp;
         for (int c{ 0 }; c < this->blocksCols; c++) {
@@ -218,9 +107,12 @@ void Game::initBlocks(){
                     temp.at(c)->getBoundary().top), 
                 temp.at(c));
         }
+        
         this->blocks.push_back(temp);
     }
+    */
   //  std::cout << "blockWidth: "<< this->blockWidth << std::endl;
+    std::cout << "blocksSize:" << this->blocks.begin()->size() << std::endl;
 }
 
 void Game::initWindow(){
@@ -228,7 +120,7 @@ void Game::initWindow(){
         sf::VideoMode(this->windowWidth, this->windowHeight),
         "Arkanoid!",
         sf::Style::Close | sf::Style::Titlebar);
-    this->window->setFramerateLimit(144);
+    this->window->setFramerateLimit(2);
     this->window->setVerticalSyncEnabled(false);
 
     this->mainFrameCoords.x = this->mainFrameWidth;
@@ -260,165 +152,6 @@ void Game::initMainFrame(){
     
 }
 
-bool Game::intersection(Ball* ball, int counter) {
-    float ballRange{ ball->getBallVelocity() };
-    while (ballRange > 0) {
-        //predict new possition
-        sf::Vector2f oPos{ ball->getposition() };
-        sf::Vector2f nPos{ ball->getBallMovementVector() };
-        float ballAlpha{ ball->getBallAlfa() };
-
-
-        //check if wall will be hitted
-        bool hitWall{ false };
-
-        //check direction 
-        //going UP
-        if (ballAlpha < 180.f) {
-            float wallIntersectionY{ 0 };
-            float wallIntersectionX{ 0 };
-            //MainFrame interaction
-            if (nPos.x - this->ballSize < this->mainFrameCoords.x) { //Left Wall
-                wallIntersectionY = (oPos.y - nPos.y) * (((oPos.x - this->ballSize) - this->mainFrameCoords.x) / (oPos.x - nPos.x));
-            }
-            else if (nPos.x + this->ballSize > this->mainFrameCoords.z) { //Right Wall
-                wallIntersectionY = (oPos.y - nPos.y) * ((this->mainFrameCoords.z - (oPos.x + this->ballSize)) / (nPos.x - oPos.x));
-            }
-            if (nPos.y - this->ballSize < this->mainFrameCoords.y) { //Top Wall
-                wallIntersectionX = ((nPos.x > oPos.x) ? nPos.x - oPos.x : oPos.x - nPos.x)
-                    * (((oPos.y - this->ballSize) - this->mainFrameCoords.y ) / (oPos.y - nPos.y));
-            }
-
-            //ball is in blocks range
-            if (nPos.y - this->ballSize <= this->mainFrameCoords.y + this->blocksRows * (this->blockDist + this->blockHight)) {
-                //check next block lvl if it exist bounce
-                //this->mainFrameCoords.y + this->blocksRows * (this->blockDist + this->blockHight)
-                for (int i{ this->blocksRows }; i >= 0; i--) {
-                    //bottom edge of block:
-                    /*
-                    //point to the center of the block
-                    c* (this->blockWidth + this->blockDist) + this->blockWidth/2 + this->blockDist + this->mainFrameCoords.x,
-                    r* (this->blockHight + this->blockDist) + this->blockHight/2 + this->blockDist + this->mainFrameCoords.y,
-                    */
-                    float bottomBlockEdge{ i * (this->blockDist + this->blockHight) };
-
-
-                }
-
-            }
-        }
-        return true;
-    }
-    return false;
-}
-bool Game::intersection2(Ball* ball, int counter) {
-    /*
-    * get ball previuos and next position
-    * determine direction
-    * if ball y variable is within paddle, block, screen, frame check colision
-    * what if ball will hit frame before or after hiting other object?
-    */
-    sf::Vector2f ballPrevPosition = ball->getposition();
-    //ball->moveBall();
-    float ballPositionY = ball->getposition().y;
-    float ballPositionX = ball->getposition().x;
-    float ballPreviousPositionY = ballPrevPosition.y;
-    float ballPreviousPositionX = ballPrevPosition.x;
-    bool hitWall{ false };
-    
-    bool directionUp = (ballPositionY < ballPreviousPositionY) ? true : false;
-    //std::cout << directionUp << std::endl; //1 up 0 down
-        
-    //check if wall will be hitted
-    if (ballPositionX - this->ballSize < this->mainFrameCoords.x ||
-        ballPositionX + this->ballSize > this->mainFrameCoords.z ||
-        ballPositionY - this->ballSize < this->mainFrameCoords.y)
-        hitWall = true;
-
-    if (ball->getBallAlfa() < 180.f) {
-        //going up, might hit block:
-        if (ballPositionY - this->ballSize <
-            this->mainFrameCoords.y + this->blocksRows * (this->blockDist + this->blockHight)) {
-           // std::cout << "Ball on the Blocks lvl    ";
-            //check x and verify blocks to be hit (up until ball's end move)
-        }
-    }
-    else {
-        if (ballPositionY - this->ballSize <
-            this->mainFrameCoords.y + this->blocksRows * (this->blockDist + this->blockHight))
-            std::cout << "Block lvl    ";
-
-    }
-
-
-
-    float ballRangeTop = ballPositionY - this->ballSize - this->blockHight;
-    float ballRangeBottom = ballPositionY + this->ballSize + this->blockHight;
-
-    //ball hitting sides
-    if (ballPositionX - this->ballSize <= this->mainFrameCoords.x ||
-        ballPositionX + this->ballSize >= this->mainFrameCoords.z) {
-        ball->changeDirection(-1, 1);
-    }
-    //ball hitting top
-    if (ballPositionY - this->ballSize <= this->mainFrameCoords.y) {
-        ball->changeDirection(1, -1);
-    }
-    //ball hitting block
-    //range ballpositionY-ballsize-blockheight : ballpositionY+ballsize+blockheight
-    //r* (this->blockHight + this->blockDist) + this->blockHight / 2 + this->blockDist + this->mainFrameCoords.y,
-    else if (ballPositionY - this->ballSize <= this->blocksRows * (this->blockHight + this->blockDist) + this->mainFrameCoords.y) {
-        bool hitBlock{ false };
-        for (size_t r{ 0 }; r < blocks.size() && !hitBlock; r++) {
-            for (size_t c{ 0 }; c < blocks.at(r).size() && !hitBlock; c++) {
-                if (ball->getBoundary().intersects(blocks.at(r).at(c)->getBoundary())) {
-                    this->playerPoints += blocks.at(r).at(c)->getPoints();
-                    delete blocks.at(r).at(c);
-                    blocks.at(r).erase(blocks.at(r).begin() + c);
-                    ball->changeDirection(-1, -1);
-                    this->blockCount--;
-                   // std::cout << "hit! - " << this->blockCount << std::endl;
-                    if (this->blockCount <= 0)
-                        this->initBlocks();
-                }
-            }
-        }
-    }
-    //ball hitting Paddle
-    else if (ballPositionY > this->paddleLevel - this->paddleSize.y - this->ballSize &&
-        ballPositionY < this->paddleLevel + this->paddleSize.y - this->ballSize)  {
-        if (ballPrevPosition != ball->getposition()) {
-            int i = intersectByLine(ball, this->paddle, ballPrevPosition);
-            //int i = intersectionDir(ball, this->paddle);
-            if (i != -1) {
-                ball->changeDirection(1, -1);
-            }
-            //if (ball->getBoundary().intersects(this->paddle->getBoundary())) {
-            //    ball->changeDirection(1, -1);
-            //}
-        }
-    }
-    //ball lost at the bottom pit
-    else if (ballPositionY >= this->windowHeight) {
-       // std::cout << "ballOut\n";
-
-        ball->ballLost();
-        return true;
-       /*
-        delete ball;
-        balls.erase(balls.begin() + counter);
-        if (this->balls.size() == 0) {
-            this->playerLives--;
-            if (this->playerLives <= 0)
-                this->gameOver = true;
-            else
-                this->startNewGame();
-        }
-        */
-    }
-    return false;
-}
-
 void Game::pollEvent() {
     sf::Event event;
     while (this->window->pollEvent(event)) {
@@ -426,13 +159,16 @@ void Game::pollEvent() {
             this->window->close();
     }
     if (event.KeyPressed) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Z))
+            this->stop = false; //tmp
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::C))
+            window->clear();
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E))
             this->balls.clear();
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
             this->paddle->paddleMove(1);
             //this->paddle->paddleWindowCollision(*this->window);
             this->paddle->paddleFrameCollision(this->mainFrameCoords);
-            
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
             this->paddle->paddleMove(-1);
@@ -455,8 +191,11 @@ void Game::colisionCheckPhase1X(Ball *ball, std::set<float>* rangeX, std::multim
         for (auto sm{secondMap->cbegin()}, nsm{sm}; sm != secondMap->cend(); sm = nsm) {
             nsm++;
             if (sm->first.first == 0.) {
-                if ((sm->second->getBoundary().left < *rangeX->begin() && sm->second->getBoundary().left + sm->second->getBoundary().width >= *rangeX->begin()) ||
-                    (sm->second->getBoundary().left >= *rangeX->begin() && sm->second->getBoundary().left <= *rangeX->rbegin())) {
+                if (*rangeX->begin() <= sm->second->getBoundary().left + sm->second->getBoundary().width &&
+                    *rangeX->rbegin() >= sm->second->getBoundary().left){
+                    //overcomplicated if
+                //if ((sm->second->getBoundary().left < *rangeX->begin() && sm->second->getBoundary().left + sm->second->getBoundary().width >= *rangeX->begin()) ||
+                //    (sm->second->getBoundary().left >= *rangeX->begin() && sm->second->getBoundary().left <= *rangeX->rbegin())) {
                     float collisionWall{};
                     if (ball->getBallAlfa() >= 90 && ball->getBallAlfa() < 270) {
                         collisionWall = sm->second->getBoundary().left;
@@ -480,8 +219,12 @@ void Game::colisionCheckPhase1X(Ball *ball, std::set<float>* rangeX, std::multim
         if (!*secondAxis) {
             for (auto m : this->mapBlock) {
                 //going through all blocks defined during initialization process:
-                if ((m.second->getBoundary().left <= *rangeX->begin() && m.second->getBoundary().left + m.second->getBoundary().width > *rangeX->begin()) ||
-                    (m.second->getBoundary().left > *rangeX->begin() && m.second->getBoundary().left < *rangeX->rbegin())) {
+                if (*rangeX->begin() <= m.second->getBoundary().left + m.second->getBoundary().width &&
+                    *rangeX->rbegin() >= m.second->getBoundary().left) {
+                    //overcomplicated if
+               // if ((m.second->getBoundary().left <= *rangeX->begin() && m.second->getBoundary().left + m.second->getBoundary().width > *rangeX->begin()) ||
+               //     (m.second->getBoundary().left > *rangeX->begin() && m.second->getBoundary().left < *rangeX->rbegin())) {
+
                     //detecting direction of ball movement and therefore store top or bottom coords
                     float collisionWall{};
                     if (ball->getBallAlfa() >= 90 && ball->getBallAlfa() < 270) {
@@ -514,8 +257,11 @@ void Game::colisionCheckPhase1Y(Ball* ball, std::set<float>* rangeY, std::multim
         for (auto sm{ secondMap->cbegin() }, nsm{ sm }; sm != secondMap->cend(); sm = nsm) {
             nsm++;
             if (sm->first.second == 0.) {
-                if ((sm->second->getBoundary().top < *rangeY->begin() && sm->second->getBoundary().top + sm->second->getBoundary().height >= *rangeY->begin()) ||
-                    (sm->second->getBoundary().top >= *rangeY->begin() && sm->second->getBoundary().top <= *rangeY->rbegin())) {
+                if (*rangeY->begin() <= sm->second->getBoundary().top + sm->second->getBoundary().height &&
+                    *rangeY->rbegin() >= sm->second->getBoundary().top) {
+                //overcomplicated if
+                //if ((sm->second->getBoundary().top < *rangeY->begin() && sm->second->getBoundary().top + sm->second->getBoundary().height >= *rangeY->begin()) ||
+                //    (sm->second->getBoundary().top >= *rangeY->begin() && sm->second->getBoundary().top <= *rangeY->rbegin())) {
                     float collisionWall{};
                     if (ball->getBallAlfa() >= 0 && ball->getBallAlfa() < 180) {
                         collisionWall = sm->second->getBoundary().top + sm->second->getBoundary().height;
@@ -539,8 +285,11 @@ void Game::colisionCheckPhase1Y(Ball* ball, std::set<float>* rangeY, std::multim
         if (!*secondAxis) {
             for (auto m : this->mapBlock) {
                 //going through all blocks defined during initialization process:
-                if ((m.second->getBoundary().top <= *rangeY->begin() && m.second->getBoundary().top + this->blockHight > *rangeY->begin()) ||
-                    (m.second->getBoundary().top > *rangeY->begin() && m.second->getBoundary().top < *rangeY->rbegin())) {
+                if (*rangeY->begin() <= m.second->getBoundary().top + m.second->getBoundary().height &&
+                    *rangeY->rbegin() >= m.second->getBoundary().top) {
+                    //overcomplicated if
+                //if ((m.second->getBoundary().top <= *rangeY->begin() && m.second->getBoundary().top + this->blockHight > *rangeY->begin()) ||
+                //    (m.second->getBoundary().top > *rangeY->begin() && m.second->getBoundary().top < *rangeY->rbegin())) {
                     //detecting direction of ball movement and therefore store top or bottom coords
                     float collisionWall{};
                     if (ball->getBallAlfa() >= 0 && ball->getBallAlfa() < 180) {
@@ -565,7 +314,7 @@ void Game::colisionCheckPhase1Y(Ball* ball, std::set<float>* rangeY, std::multim
 //void Game::colisionCheckPhase2(Ball* ball, std::set<float>* rangeX, std::set<float>* rangeY, std::multimap<std::pair<float, float>, Block*>* secondMap) {
 float Game::colisionCheckPhase2(Ball * ball, float endPositionX, float endPositionY, std::multimap<std::pair<float, float>, Block*>*secondMap, std::set<float>* rangeX, std::set<float>* rangeY) {
 
-    std::map <float, Block*> collisionMap{};
+    std::multimap <float, Block*> collisionMap{};
 
     float offsetX{ ((ball->getBallAlfa() < 90.) || (ball->getBallAlfa() > 270.) ? 1 : -1) * ball->getBallRadius() };
     float offsetY{ ((ball->getBallAlfa() <= 180.) ? -1 : 1) * ball->getBallRadius() };
@@ -582,7 +331,7 @@ float Game::colisionCheckPhase2(Ball * ball, float endPositionX, float endPositi
             if (distance <= ball->getDistanceLeftToMove() + ball->getBallRadius() ) {
                 collisionMap.insert({ distance, this->paddle });
             }
-            std::cout << "Paddle" << std::endl;
+            //std::cout << "Paddle" << std::endl;
         }
     }
     if (!secondMap->empty()) {
@@ -599,41 +348,220 @@ float Game::colisionCheckPhase2(Ball * ball, float endPositionX, float endPositi
                 float collisionX{ calculateCoords(
                     ball->getposition().x, ball->getposition().y + offsetY,
                     endPositionX, endPositionY + offsetY,
-                    0, sm.first.second)};
-                float distanceX{ calculateDistance(ball->getposition().x , ball->getposition().y + offsetY , collisionX, sm.first.second ) };
-                if (distanceX <= ball->getDistanceLeftToMove()) {
-                    std::cout << "[X]:" << distanceX;
-                    collisionMap.insert({ distanceX, sm.second });
-                }
-                //calc y pos for know x value
+                    0, sm.first.second)}; //point where ball will hit
+                bool correctDirectionX{ false };
                 float collisionY{ calculateCoords(
                     ball->getposition().x + offsetX, ball->getposition().y,
                     endPositionX + offsetX, endPositionY ,
                     sm.first.first, 0) };
-                float distanceY{ calculateDistance(ball->getposition().x+ offsetX , ball->getposition().y, sm.first.first, collisionY) };
-                if (distanceY < ball->getDistanceLeftToMove()) {
-                    std::cout << "[Y]:" << distanceY;
-                    collisionMap.insert({ distanceY, sm.second });
-                }
-                std::cout << std::endl;
+                bool correctDirectionY{ false };
+
+                // is it necessary? in worst case scenario (if it is behind) the ball will move shorter distance in this itteration :?
+                    //if (offsetX > 0) {
+                    //    if (collisionX > ball->getposition().x) correctDirectionX = true;
+                    //}
+                    //else {
+                    //    if (collisionX < ball->getposition().x) correctDirectionX = true;
+                    //}
+                    ////float distanceX{ (correctDirectionX) ? calculateDistance(ball->getposition().x , ball->getposition().y + offsetY , collisionX, sm.first.second) : -1 };
+                    //
+                    //if (offsetY < 0) {
+                    //    if (collisionY < ball->getposition().y) correctDirectionY = true;
+                    //}
+                    //else {
+                    //    if (collisionY == ball->getposition().y) correctDirectionY = true;
+                    //}
+                    ////float distanceY{ (correctDirectionY) ? calculateDistance(ball->getposition().x + offsetX , ball->getposition().y, sm.first.first, collisionY) : -1 };
+
+                //collisionMap.insert({ ccDistance , sm.second })
+
+                //if (correctDirectionX && correctDirectionY) {
+                //    std::cout << "conrercase!!!" << std::endl;
+                //}
+
+                //else if (correctDirectionX) {
+                    //float distanceX{ calculateDistance(ball->getposition().x , ball->getposition().y + offsetY , collisionX, sm.first.second) };
+                    //if (distanceX <= ball->getDistanceLeftToMove()) {
+                    //    std::cout << "X!!!" << std::endl;
+                    //    collisionMap.insert({ distanceX , sm.second });
+                    //}
+               //}
+
+                //else if (correctDirectionY) {
+                    //float distanceY{ calculateDistance(ball->getposition().x + offsetX , ball->getposition().y, sm.first.first, collisionY) };
+                    //if (distanceY <= ball->getDistanceLeftToMove()) {
+                    //    std::cout << "Y!!!" << std::endl;
+                    //    collisionMap.insert({ distanceY , sm.second });
+                    //}
+                //}
+
+                //float Game::calculateDistance(float x, float y, float a, float b) {
+                // return sqrt((x - a) * (x - a) + (y - b) * (y - b));
+                    float distanceX{ calculateDistance(ball->getposition().x , ball->getposition().y + offsetY , collisionX, sm.first.second) };
+                    float distanceY{ calculateDistance(ball->getposition().x + offsetX , ball->getposition().y, sm.first.first, collisionY) };
+                    //distance will always be possitive, can it be 0? 
+                    if (distanceX <= ball->getDistanceLeftToMove() && distanceY <= ball->getDistanceLeftToMove()) {
+                        std::cout << "conrercase!!!" << std::endl;
+                    }
+                    if (distanceX <= ball->getDistanceLeftToMove()) {
+                        std::cout << "X!!!" << std::endl;
+                        collisionMap.insert({ distanceX , sm.second });
+                    }
+                    if (distanceY <= ball->getDistanceLeftToMove()) {
+                        std::cout << "Y!!!" << std::endl;
+                        collisionMap.insert({ distanceY , sm.second });
+                    }
+
+
+
+
+
+
+            //    bool cornerCase{ false };
+            //    //check if it is corner case
+            //    if (
+            //
+            //        //distanceX <= ball->getDistanceLeftToMove() &&
+            //        //distanceY <= ball->getDistanceLeftToMove() &&
+            //        collisionX >= (offsetX >= 0) ? sm.second->getBoundary().left - ball->getBallRadius() : sm.second->getBoundary().left + sm.second->getBoundary().width &&
+            //        collisionX <= (offsetX >= 0) ? sm.second->getBoundary().left : sm.second->getBoundary().left + sm.second->getBoundary().width + ball->getBallRadius() &&
+            //        collisionY >= (offsetY >= 0) ? sm.second->getBoundary().top - ball->getBallRadius() : sm.second->getBoundary().top  &&
+            //        collisionY <= (offsetY >= 0) ? sm.second->getBoundary().top + sm.second->getBoundary().height : sm.second->getBoundary().top + sm.second->getBoundary().height + ball->getBallRadius()
+            //
+            //        ) {
+            //        //check direction ?
+            //        // if offsetx < 0 - collsionX < ball pos.
+            //        // if offsetx > 0 - collsionX > ball pos.
+            //        // 
+            //        // left direction movement:    <-o...[==]    offsetX < 0
+            //        // collision point > ball pos  (ball pos - coll point) * offset => - * - => +   MISS
+            //        // left direction movement:    [==]...<-o   offsetX < 0
+            //        // collision point < ball pos  (ball pos - coll point) * offset => + * - => -   HIT?
+            //        // 
+            //        // right direction movement:    o->...[==]  offset > 0
+            //        // collsion point > ball pos    (ball  pos - coll point) * offset => - * + => - HIT?
+            //        // right direction movement:    [==]...o->  offset > 0
+            //        // colision point < ball pos    (ball  pos - coll point) * offset => + * + => + MISS
+            //        // 
+            //        // [==]  up direction movement offset < 0
+            //        // ^    collision point < ball pos      (ball pos - call point) * offset => + * - => - HIT?
+            //        // o   
+            //        // ^    collision point > ball pos      (ball pos - call point) * offset => - * - => + MISS
+            //        // [==]
+            //        // 
+            //        // [==] down direction movement offset > 0
+            //        // v    collision point < ball pos      (ball pos - call point) * offset => + * + => + MISS
+            //        // o
+            //        // v    collision point > ball pos      (ball pos - call point) * offset => - * + => - HIT?
+            //        // [==]
+            //        // 
+            //        //
+            //        if (
+            //            ((collisionX - ball->getposition().x) * offsetX) > 0 && //HIT? 
+            //            ((collisionY - ball->getposition().y) * offsetY) > 0
+            //            ) {
+            //            std::cout << "CornerCase(" << distanceX << ")" << std::endl;
+            //            float ccDistance { calculateDistance(ball->getposition().x, ball->getposition().y, sm.first.first, sm.first.second) - ball->getBallRadius() };
+            //            if (ccDistance < ball->getDistanceLeftToMove()) {
+            //                collisionMap.insert({ ccDistance , sm.second });
+            //            }
+            //        }
+            //    }
+            //    else {
+            //        // not corner case
+            //        // standard case - ball will hit the wall
+            //        if (sm.second->getBoundary().left <= collisionX &&
+            //            collisionX <= sm.second->getBoundary().left + sm.second->getBoundary().width &&
+            //            distanceX <= ball->getDistanceLeftToMove()) {
+            //            collisionMap.insert({ distanceX, sm.second });
+            //        }
+            //
+            //        if (sm.second->getBoundary().top <= collisionY &&
+            //            collisionY <= sm.second->getBoundary().top + sm.second->getBoundary().height &&
+            //            distanceY <= ball->getDistanceLeftToMove()) {
+            //            collisionMap.insert({ distanceY, sm.second });
+            //        }
+            //    }
+
+
+
+
+
+
+
+
+
+
+                //X: (ball->getBallAlfa() < 90.) || (ball->getBallAlfa() > 270.) ? sm.second->getBoundary().left : sm.second->getBoundary().left
+                //float offsetY{ ((ball->getBallAlfa() <= 180.) ? -1 : 1) * ball->getBallRadius() };
+                //
+                //
+                //offset is eighter + or - ball radius value - this can determine ball direction without need to fetch alfa angle
+                //
+                    //check if destination is within block boundary
+                    //if (collisionX >= (ball->getBallAlfa() < 90.) || (ball->getBallAlfa() > 270.) ? sm.second->getBoundary().left - ball->getBallRadius() : sm.second->getBoundary().left &&
+                    //    collisionX <= (ball->getBallAlfa() < 90.) || (ball->getBallAlfa() > 270.) ? sm.second->getBoundary().left + ball->getBallRadius() + sm.second->getBoundary().width : sm.second->getBoundary().left + sm.second->getBoundary().width
+                    //    //sm.second->getBoundary().left + sm.second->getBoundary().width
+                    //    )
+
+            //        if (collisionX >= sm.second->getBoundary().left - (offsetX >0) ? ball->getBallRadius() : 0 &&
+            //            collisionX <= sm.second->getBoundary().left + sm.second->getBoundary().width + (offsetX > 0) ? 0 : ball->getBallRadius()){
+            //
+            //            //if its within cc range - set bool var to true
+            //
+            //        //if (collisionX >= sm.second->getBoundary().left && collisionX <= sm.second->getBoundary().left + sm.second->getBoundary().width){
+            //            bool withinRangeX{ false};
+            //            //std::cout << "[X]:" << distanceX;
+            //            collisionMap.insert({ distanceX, sm.second });
+            //        }
+            //    }
+                //check if destination is within block boundary
+
+            //    bool withinRangeY{ false };
+            //    if (distanceY < ball->getDistanceLeftToMove()) {
+            //        //std::cout << "[Y]:" << distanceY;
+            //        collisionMap.insert({ distanceY, sm.second });
+            //    }
+            //    std::cout << std::endl;
+
+
+
+
+
+
+
+
+
+
+
+
             }
-            std::cout << "Y:" << collisionMap.size() << " " << ball->getDistanceLeftToMove();
-            std::cout << "offset: x:" << offsetX << " y:" << offsetY;
-            std::cout << std::endl;
+            //std::cout << "Y:" << collisionMap.size() << " " << ball->getDistanceLeftToMove();
+            //std::cout << "offset: x:" << offsetX << " y:" << offsetY;
+            //std::cout << std::endl;
     }
     if (!collisionMap.empty()) {
         //check if paddle will be hit
+        std::cout << "collisionMap: ";
         for (auto c : collisionMap) {
+            std::cout << "Id:" << c.second->getId() << " dist: ";
             std::cout << c.first << ", ";
         }
-        std::cout << std::endl;;
+        std::cout << "/" <<  ball->getDistanceLeftToMove() << std::endl;;
         collisionMap.begin()->second->setcolor(sf::Color::White);
-        // ball->moveBall(collisionMap.begin()->first - ball->getSize());
+        //ball->moveBall(collisionMap.begin()->first - ball->getSize());
+        ball->moveBall(collisionMap.begin()->first);
         ball->changeDirection(180.);
-        ball->ballGetStuck();
-        return collisionMap.begin()->first;
+        //ball->ballGetStuck();
+        //draw();
+        return 0;
+        //return collisionMap.begin()->first;
     }
+    ball->moveBall(ball->getDistanceLeftToMove());
     return ball->getDistanceLeftToMove();
+}
+void collisionRespond() {
+    //move ball to position of collision then determine new angle and go back to step 1.
 }
 /*void Game::colisionCheckPaddle(Ball* ball) {
     //PaddleX
@@ -677,50 +605,59 @@ void Game::colisionAlgorithm(Ball* ball) {
     std::set<float> rangeXball{ *rangeX.begin() - ball->getBallRadius(), *rangeX.rbegin() + ball->getBallRadius() };
     std::set<float> rangeYball{ *rangeY.begin() - ball->getBallRadius(), *rangeY.rbegin() + ball->getBallRadius() };
 
-    //sf::CircleShape p00, p01, p10, p11;
-    //float r{ 5 };
-    this->p00.setRadius(this->r);
-    this->p01.setRadius(this->r);
-    this->p10.setRadius(this->r);
-    this->p11.setRadius(this->r);
+                    //sf::CircleShape p00, p01, p10, p11;
+                    //float r{ 5 };
+                    this->p00.setRadius(this->r);
+                    this->p01.setRadius(this->r);
+                    this->p10.setRadius(this->r);
+                    this->p11.setRadius(this->r);
     
-    this->p00.setFillColor(sf::Color::Green);
-    this->p01.setFillColor(sf::Color::Green);
-    this->p10.setFillColor(sf::Color::Green);
-    this->p11.setFillColor(sf::Color::Green);
+                    this->p00.setFillColor(sf::Color::Green);
+                    this->p01.setFillColor(sf::Color::Green);
+                    this->p10.setFillColor(sf::Color::Green);
+                    this->p11.setFillColor(sf::Color::Green);
     
-    this->p00.setOrigin(this->r / 2, this->r / 2);
-    this->p01.setOrigin(this->r / 2, this->r / 2);
-    this->p10.setOrigin(this->r / 2, this->r / 2);
-    this->p11.setOrigin(this->r / 2, this->r / 2);
+                    this->p00.setOrigin(this->r / 2, this->r / 2);
+                    this->p01.setOrigin(this->r / 2, this->r / 2);
+                    this->p10.setOrigin(this->r / 2, this->r / 2);
+                    this->p11.setOrigin(this->r / 2, this->r / 2);
 
-    this->p00.setPosition(*rangeXball.begin(),  *rangeYball.begin());
-    this->p01.setPosition(*rangeXball.begin(),  *rangeYball.rbegin());
-    this->p10.setPosition(*rangeXball.rbegin(), *rangeYball.begin());
-    this->p11.setPosition(*rangeXball.rbegin(), *rangeYball.rbegin());
+                    this->p00.setPosition(*rangeXball.begin(),  *rangeYball.begin());
+                    this->p01.setPosition(*rangeXball.begin(),  *rangeYball.rbegin());
+                    this->p10.setPosition(*rangeXball.rbegin(), *rangeYball.begin());
+                    this->p11.setPosition(*rangeXball.rbegin(), *rangeYball.rbegin());
 
-    
-    if (!ball->isBallStuck()) {
+                    this->v0 = sf::Vertex(sf::Vector2f(*rangeXball.begin(), *rangeYball.begin()));
+                    this->v1 = sf::Vertex(sf::Vector2f(*rangeXball.begin(), *rangeYball.rbegin()));
+                    this->v2 = sf::Vertex(sf::Vector2f(*rangeXball.rbegin(), *rangeYball.rbegin()));
+                    this->v3 = sf::Vertex(sf::Vector2f(*rangeXball.rbegin(), *rangeYball.begin()));
+
+    if (!ball->isBallStuck()) {//} && !this->stop) {
      //   std::cout << "S" << ball->getDistanceLeftToMove()<<"$" << std::endl;
         //if (*rangeX.rbegin() > 0 && *rangeY.rbegin() > 0) {
-            if ((*rangeX.rbegin() - *rangeX.begin()) <= (*rangeY.rbegin() - *rangeY.begin())) {
+            //if ((*rangeX.rbegin() - *rangeX.begin()) <= (*rangeY.rbegin() - *rangeY.begin())) {
                 colisionCheckPhase1X(ball, &rangeXball, secondMap, &secondAxis);
                 colisionCheckPhase1Y(ball, &rangeYball, secondMap, &secondAxis);
-            }
-            else {
-                colisionCheckPhase1Y(ball, &rangeYball, secondMap, &secondAxis);
-                colisionCheckPhase1X(ball, &rangeXball, secondMap, &secondAxis);
-            }
+            //}
+            //else {
+            //    colisionCheckPhase1Y(ball, &rangeYball, secondMap, &secondAxis);
+            //    colisionCheckPhase1X(ball, &rangeXball, secondMap, &secondAxis);
+            //}
             //if (!secondMap->empty()) colisionCheckPhase2(ball, &rangeX, &rangeY, secondMap);
             //if (!secondMap->empty()) 
-            ball->moveBall(colisionCheckPhase2(ball, ballSecondPosition.x, ballSecondPosition.y, secondMap, &rangeXball, &rangeYball));
+            //ball->moveBall(colisionCheckPhase2(ball, ballSecondPosition.x, ballSecondPosition.y, secondMap, &rangeXball, &rangeYball));
+
+            colisionCheckPhase2(ball, ballSecondPosition.x, ballSecondPosition.y, secondMap, &rangeXball, &rangeYball);
         //}
             //else ball->moveBall();
-            std::cout << "Left to move:" << ball->getDistanceLeftToMove() << std::endl;
-            if (ball->getDistanceLeftToMove() > 0.) colisionAlgorithm(ball);
+            //std::cout << "Left to move:" << ball->getDistanceLeftToMove() << std::endl;
+           // ball->ballGetStuck();
         
     }
+    if (ball->getDistanceLeftToMove() > 0. && !ball->isBallStuck()) colisionAlgorithm(ball);
     delete secondMap;
+
+    //this->stop = true;
 }
 
 void Game::update() {
@@ -736,8 +673,8 @@ void Game::update() {
 
             colisionAlgorithm(ball);
 
-            if (intersection(ball, counter)) ballLost = true;  //counter can be discarded
-            counter++;
+           // if (intersection(ball, counter)) ballLost = true;  //counter can be discarded
+            //counter++;
         }
         for (auto it{ balls.begin() }; it != balls.end(); ) {
             if ((*it)->getLostBall()) {
@@ -786,6 +723,15 @@ void Game::renderGui() {
 
 void Game::draw() {
     window->clear();
+
+    sf::Vertex line[5] = {
+        this->v0,
+        this->v1,
+        this->v2,
+        this->v3,
+        this->v0
+    };
+    this->window->draw(line, 5, sf::LineStrip);
 
     this->renderGui();
     //for (auto w : walls) {
