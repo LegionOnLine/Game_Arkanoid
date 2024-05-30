@@ -43,7 +43,7 @@ private:
 
 	std::vector<Ball*> balls;
 	float ballSize{ 150/2 };
-	float ballSpeed{ 50 };
+	float ballSpeed{ 550 };
 	float alpha{90.0};
 
 	Paddle* paddle;
@@ -93,10 +93,8 @@ public:
 	void colisionAlgorithm(Ball *ball);
 	void colisionCheckPhase1X(Ball *ball, std::set<float> *rangeX, std::multimap<std::pair<float, float>, Block*> *secondMap, bool *secondAxis);
 	void colisionCheckPhase1Y(Ball *ball, std::set<float> *rangeY, std::multimap<std::pair<float, float>, Block*> *secondMap, bool *secondAxis);
-	//void colisionCheckPhase2(Ball* ball, std::set<float>* rangeX, std::set<float>* rangeY, std::multimap<std::pair<float, float>, Block*>* secondMap);
 	float colisionCheckPhase2(Ball* ball, float endPositionX, float endPositionY, std::multimap<std::pair<float, float>, Block*>* secondMap, std::set<float>* rangeX, std::set<float>* rangeY);
-	//void colisionCheckPaddle(Ball* ball, );
-	void collisionRespond();
+	float collisionRespond(Ball* ball, float hitPoint);
 
 	float calculateDistance(float x, float y, float a, float b);
 	float calculateDistanceX(float xp, float yp, float xs, float ys, float yc);

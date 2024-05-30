@@ -10,7 +10,7 @@ void Paddle::draw(sf::RenderTarget& target, sf::RenderStates state) const{
 Paddle::Paddle(float frameX, float frameY, sf::Vector2f paddleSize){
 	this->paddleSize = paddleSize;
 	this->paddle.setSize(this->paddleSize);
-	this->paddle.setFillColor(sf::Color::Blue);
+	this->paddle.setFillColor(sf::Color::Cyan);
 	this->paddle.setOrigin(this->paddleSize.x/2, this->paddleSize.y/2);
 	this->paddle.setPosition(frameX, frameY);
 

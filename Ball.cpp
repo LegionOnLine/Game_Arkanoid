@@ -62,6 +62,7 @@ void Ball::recalcAlpha(float alpha) {
 	while (alpha < 0.f) {
 		alpha += 360.f;
 	}
+	if (alpha == 0.f || alpha == 90.f || alpha == 180.f || alpha == 270.f) { alpha += 1.f; }
 	this->alpha= alpha;
 }
 
