@@ -94,7 +94,7 @@ public:
 	void colisionCheckPhase1X(Ball *ball, std::set<float> *rangeX, std::multimap<std::pair<float, float>, Block*> *secondMap, bool *secondAxis);
 	void colisionCheckPhase1Y(Ball *ball, std::set<float> *rangeY, std::multimap<std::pair<float, float>, Block*> *secondMap, bool *secondAxis);
 	float colisionCheckPhase2(Ball* ball, float endPositionX, float endPositionY, std::multimap<std::pair<float, float>, Block*>* secondMap, std::set<float>* rangeX, std::set<float>* rangeY);
-	float collisionRespond(Ball* ball, float hitPoint);
+	float collisionRespond(float alpha, char normalAxis);
 
 	float calculateDistance(float x, float y, float a, float b);
 	float calculateDistanceX(float xp, float yp, float xs, float ys, float yc);
