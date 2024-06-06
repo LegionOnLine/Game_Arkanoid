@@ -64,6 +64,7 @@ void Ball::recalcAlpha(float alpha) {
 	}
 	if (alpha == 0.f || alpha == 90.f || alpha == 180.f || alpha == 270.f) { alpha += 1.f; }
 	this->alpha= alpha;
+	this->direction = alpha / 90.f + 1;
 }
 
 //void Ball::moveBall(){ //to be removed?
@@ -178,6 +179,9 @@ bool Ball::getLostBall(){
 float Ball::getBallAlfa(){
 	return this->alpha;
 }
+int Ball::getBallDirection() {
+	return this->direction;
+}
 
 float Ball::getBallVelocity(){
 	return this->velocity;
@@ -202,4 +206,18 @@ sf::Vector2f Ball::predictPosition() {
 	return sf::Vector2f(
 		this->shape.getPosition().x + this->distanceLeftToMove * this->ballMovementVector.x,
 		this->shape.getPosition().y + this->distanceLeftToMove * this->ballMovementVector.y);
+}
+sf::Vector2f Ball::predictPosition(float distance) {
+
+	//std::cout << this->distanceLeftToMove * this->ballMovementVector.y << std::endl;
+	//std::cout <<"distanceLeftToMove" << this->distanceLeftToMove  << std::endl;
+	//
+	//std::cout << "ballMovementVector.x" << this->ballMovementVector.x << std::endl;
+	//
+	//std::cout << "ballMovementVector.y" << this->ballMovementVector.y << std::endl;
+	//
+	//std::cout << this->distanceLeftToMove * this->ballMovementVector.x << " ";
+	return sf::Vector2f(
+		this->shape.getPosition().x + distance * this->ballMovementVector.x,
+		this->shape.getPosition().y + distance * this->ballMovementVector.y);
 }

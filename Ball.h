@@ -7,6 +7,7 @@ class Ball : public sf::Drawable{
 private:
 	sf::CircleShape shape;
 	float alpha; //[0-360)
+	int direction; // [1-4]
 	sf::Vector2f ballMovementVector; // x,y : [-1 - +1]
 	float velocity{ 1 };
 	float distanceLeftToMove;// { velocity };
@@ -58,9 +59,11 @@ public:
 	void ballLost();
 	bool getLostBall();
 	float getBallAlfa();
+	int getBallDirection();
 	float getBallVelocity();
 	sf::Vector2f getBallMovementVector();
 
 	sf::Vector2f predictPosition();
+	sf::Vector2f predictPosition(float distance);
 };
 

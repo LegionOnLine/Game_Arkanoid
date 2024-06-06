@@ -44,7 +44,7 @@ private:
 	std::vector<Ball*> balls;
 	float ballSize{ 150/2 };
 	float ballSpeed{ 550 };
-	float alpha{90.0};
+	float alpha{80.0};
 
 	Paddle* paddle;
 	sf::Vector2f paddleSize{ 150.f, 10.f };
@@ -96,6 +96,8 @@ public:
 	float colisionCheckPhase2(Ball* ball, float endPositionX, float endPositionY, std::multimap<std::pair<float, float>, Block*>* secondMap, std::set<float>* rangeX, std::set<float>* rangeY);
 	float collisionRespond(float alpha, char normalAxis);
 
+
+	float calculateDistance(sf::Vector2f ballPos, sf::Vector2f colision);
 	float calculateDistance(float x, float y, float a, float b);
 	float calculateDistanceX(float xp, float yp, float xs, float ys, float yc);
 	float calculateDistanceY(float xp, float yp, float xs, float ys, float xc);
