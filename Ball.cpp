@@ -64,7 +64,18 @@ void Ball::recalcAlpha(float alpha) {
 	}
 	if (alpha == 0.f || alpha == 90.f || alpha == 180.f || alpha == 270.f) { alpha += 1.f; }
 	this->alpha= alpha;
-	this->direction = alpha / 90.f + 1;
+	if (this->alpha < 90.f) {
+		this->direction = 0x10; // [0xXY]
+	}
+	else if (this->alpha < 180.f) {
+		this->direction = 0x00;
+	}
+	else if (this->alpha < 270.f) {
+		this->direction = 0x01;
+	}
+	else {
+		this->direction = 0x11;
+	}
 }
 
 //void Ball::moveBall(){ //to be removed?

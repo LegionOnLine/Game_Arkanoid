@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
+#include <list>
 #include <set>
 #include "Ball.h"
 #include "Paddle.h"
@@ -92,8 +93,15 @@ public:
 
 	void colisionAlgorithm(Ball *ball);
 	void colisionCheckPhase1X(Ball *ball, std::set<float> *rangeX, std::multimap<std::pair<float, float>, Block*> *secondMap, bool *secondAxis);
-	void colisionCheckPhase1Y(Ball *ball, std::set<float> *rangeY, std::multimap<std::pair<float, float>, Block*> *secondMap, bool *secondAxis);
+	void colisionCheckPhase1X(Ball* ball, std::set<float>* rangeX, std::set<Block*>* collisionSet);
+
+	void colisionCheckPhase1Y(Ball* ball, std::set<float>* rangeY, std::multimap<std::pair<float, float>, Block*>* secondMap, bool* secondAxis);
+	void colisionCheckPhase1Y(Ball* ball, std::set<float>* rangeY, std::set<Block*>* collisionSet);
+
+	
 	float colisionCheckPhase2(Ball* ball, float endPositionX, float endPositionY, std::multimap<std::pair<float, float>, Block*>* secondMap, std::set<float>* rangeX, std::set<float>* rangeY);
+	float colisionCheckPhase2(Ball* ball, float endPositionX, float endPositionY, std::set<Block*>* collisionSet, std::set<float>* rangeX, std::set<float>* rangeY);
+
 	float collisionRespond(float alpha, char normalAxis);
 
 
