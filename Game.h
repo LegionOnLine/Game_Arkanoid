@@ -45,10 +45,10 @@ private:
 	std::vector<Ball*> balls;
 	float ballSize{ 150/2 };
 	float ballSpeed{ 550 };
-	float alpha{80.0};
+	float alpha{30.0};
 
 	Paddle* paddle;
-	sf::Vector2f paddleSize{ 150.f, 10.f };
+	sf::Vector2f paddleSize{ 1550.f, 10.f };
 
 	std::vector<std::vector<Block*>> blocks;
 	int blocksCols{ 10 };
@@ -92,15 +92,12 @@ public:
 	void pollEvent();
 
 	void colisionAlgorithm(Ball *ball);
-	void colisionCheckPhase1X(Ball *ball, std::set<float> *rangeX, std::multimap<std::pair<float, float>, Block*> *secondMap, bool *secondAxis);
-	void colisionCheckPhase1X(Ball* ball, std::set<float>* rangeX, std::set<Block*>* collisionSet);
+	void colisionCheckPhase1X(Ball* ball, std::set<float>* rangeXball, std::set<Block*>* collisionSet);
 
-	void colisionCheckPhase1Y(Ball* ball, std::set<float>* rangeY, std::multimap<std::pair<float, float>, Block*>* secondMap, bool* secondAxis);
-	void colisionCheckPhase1Y(Ball* ball, std::set<float>* rangeY, std::set<Block*>* collisionSet);
+	void colisionCheckPhase1Y(Ball* ball, std::set<float>* rangeYball, std::set<Block*>* collisionSet);
+	void colisionCheckPhase1Wall(Ball* ball, std::set<float>* rangeXball, std::set<float>* rangeYball, std::set<Block*>* collisionSet);
 
-	
-	float colisionCheckPhase2(Ball* ball, float endPositionX, float endPositionY, std::multimap<std::pair<float, float>, Block*>* secondMap, std::set<float>* rangeX, std::set<float>* rangeY);
-	float colisionCheckPhase2(Ball* ball, float endPositionX, float endPositionY, std::set<Block*>* collisionSet, std::set<float>* rangeX, std::set<float>* rangeY);
+	float colisionCheckPhase2(Ball* ball, sf::Vector2f ballEndPosition, std::set<Block*>* collisionSet, std::set<float>* rangeX, std::set<float>* rangeY);
 
 	float collisionRespond(float alpha, char normalAxis);
 
@@ -110,6 +107,7 @@ public:
 	float calculateDistanceX(float xp, float yp, float xs, float ys, float yc);
 	float calculateDistanceY(float xp, float yp, float xs, float ys, float xc);
 	float calculateCoords(float startPositionX, float startPositionY, float endPositionX, float endPositionY, float collisionPositionX, float collisionPositionY);
+	float calculateCoords(sf::Vector2f startPosition, sf::Vector2f endPosition, float collisionPositionX, float collisionPositionY);
 
 	void update();
 	void updateGui();
