@@ -285,36 +285,36 @@ float Game::colisionCheckPhase2(Ball* ball, sf::Vector2f ballEndPosition, std::s
     //int blockOffsetX{ ((ball->getBallDirection() & 0x10) ? 0 : 1) };
     //int blockOffsetY{ ((ball->getBallDirection() & 0x01) ? 0 : 1) };
 
-    float ballOffsetX{};
-    float ballOffsetY{};
+    float ballOffsetX{ ballRadius };
+    float ballOffsetY{ ballRadius };
     int blockOffsetX{};
     int blockOffsetY{};
     if (ball->getBallDirection() == 0x00) { // Left - Up
-        ballOffsetX = -1.f;
-        ballOffsetY = -1.f;
+        ballOffsetX *= -1.f;
+        ballOffsetY *= -1.f;
         blockOffsetX = 1;
         blockOffsetY = 1;
     }
     else if (ball->getBallDirection() == 0x01) { // Left - Down
-        ballOffsetX = -1.f;
-        ballOffsetY = 1.f;
+        ballOffsetX *= -1.f;
+        ballOffsetY *= 1.f;
         blockOffsetX = 1;
         blockOffsetY = 0;
     }
     else if (ball->getBallDirection() == 0x10) { // Right - Up
-        ballOffsetX = 1.f;
-        ballOffsetY = -1.f;
+        ballOffsetX *= 1.f;
+        ballOffsetY *= -1.f;
         blockOffsetX = 0;
         blockOffsetY = 1;
     }
     else {                                         //Right - Down
-        ballOffsetX = 1.f;
-        ballOffsetY = 1.f;
+        ballOffsetX *= 1.f;
+        ballOffsetY *= 1.f;
         blockOffsetX = 0;
         blockOffsetY = 0;
     }
-    ballOffsetX *= ballRadius;
-    ballOffsetY *= ballRadius;
+    //ballOffsetX *= ballRadius;
+    //ballOffsetY *= ballRadius;
 
     //check Y for collision with paddle:
     //PaddleY
@@ -339,7 +339,7 @@ float Game::colisionCheckPhase2(Ball* ball, sf::Vector2f ballEndPosition, std::s
             //     collisionX - collision point in X-axis, y taken from block wall
             //     collisionY - collision point in Y-axis, x taken from block wall
             // 0 is for function to know what value we want to find
-
+            std::cout << "colisionSet is not empty!" << std::endl;
 
             //  ballOffsetX
             //  ballOffsetY
@@ -404,23 +404,66 @@ float Game::colisionCheckPhase2(Ball* ball, sf::Vector2f ballEndPosition, std::s
             //    }
             //}
 
-            if ((ball->getBallDirection() & 0x10)) {   //going right
-                if (collisionX > ball->getposition().x) {
+            //if ((ball->getBallDirection() & 0x10)) {   //going right
+            //    std::cout << std::endl << "ball going right" << std::endl;
+            //    // collisionX - for know y lvl find collision point in x axis
+            //    if (collisionX > ball->getposition().x) { //colision is to the right of current position
+            //
+            //        std::cout <<  "ball if - if" << std::endl;
+            //        distanceX = calculateDistance(ball->getposition().x, ball->getposition().y,
+            //            collisionX, blockWallY);
+            //        distanceY = calculateDistance(ball->getposition().x, ball->getposition().y,
+            //            blockWallX, collisionY);
+            //    }
+            //}
+            //else {          //going left
+            //    std::cout << std::endl << "ball going left" << std::endl;
+            //    if (collisionX < ball->getposition().x) { // collision is to th eleft of current position
+            //        distanceX = calculateDistance(ball->getposition().x, ball->getposition().y,
+            //            collisionX, blockWallY);
+            //        distanceY = calculateDistance(ball->getposition().x, ball->getposition().y,
+            //            blockWallX, collisionY);
+            //    }
+            //}
+            //
+            //bool flag{ false };
+
+            if ((ball->getBallDirection() & 0x10)) { //going right 
+                if (collisionX > ball->getposition().x) { //collision is to the right
                     distanceX = calculateDistance(ball->getposition().x, ball->getposition().y,
                         collisionX, blockWallY);
+                }
+            }
+            else { //going left
+                if (collisionX < ball->getposition().x) { //collision is to the left
+                    distanceX = calculateDistance(ball->getposition().x, ball->getposition().y,
+                        collisionX, blockWallY);
+                }
+            }
+            if ((ball->getBallDirection() & 0x01)) { // going donw
+                if (collisionY > ball->getposition().y) { // collision is lower (higher y value)
                     distanceY = calculateDistance(ball->getposition().x, ball->getposition().y,
                         blockWallX, collisionY);
                 }
             }
             else {
-                if (collisionX < ball->getposition().x) {
-                    distanceX = calculateDistance(ball->getposition().x, ball->getposition().y,
-                        collisionX, blockWallY);
+                if (collisionY < ball->getposition().y) { // collision is higher (lower y value)
                     distanceY = calculateDistance(ball->getposition().x, ball->getposition().y,
                         blockWallX, collisionY);
                 }
             }
 
+            //if (flag) {
+            //    std::cout << std::endl << "flag is true" << std::endl;
+            //    distanceX = calculateDistance(ball->getposition().x, ball->getposition().y,
+            //        collisionX, blockWallY);
+            //    distanceY = calculateDistance(ball->getposition().x, ball->getposition().y,
+            //        blockWallX, collisionY);
+            //
+            //}
+
+
+            std::cout << std::endl << "DistanceX - " << distanceX << std::endl << "DistanceY - " << distanceY << std::endl;
             // distanceX and distanceY is calculated from ball position +/- offset in specific direction
             // if collision is within R range from block corner then it is cornercase
 
