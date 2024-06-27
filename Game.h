@@ -45,7 +45,7 @@ private:
 	std::vector<Ball*> balls;
 	float ballSize{ 150/2 };
 	float ballSpeed{ 550 };
-	float alpha{160.0};
+	float alpha{150.0};
 
 	Paddle* paddle;
 	sf::Vector2f paddleSize{ 1550.f, 10.f };

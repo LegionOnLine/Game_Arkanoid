@@ -446,7 +446,7 @@ float Game::colisionCheckPhase2(Ball* ball, sf::Vector2f ballEndPosition, std::s
                         blockWallX, collisionY);
                 }
             }
-            else {
+            else { // going up
                 if (collisionY < ball->getposition().y) { // collision is higher (lower y value)
                     distanceY = calculateDistance(ball->getposition().x, ball->getposition().y,
                         blockWallX, collisionY);
