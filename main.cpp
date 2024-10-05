@@ -1,8 +1,13 @@
 #include "Game.h"
+#include "gTest.h"
 
+bool TESTS{ true };
 
-int main()
-{
+int main(int argc, char* argv[]){
+    sf::Style::None;
+    if (TESTS) {
+        return mainTest(argc, argv);
+    }
     Game game;
     /*
     float angle = 5.f;

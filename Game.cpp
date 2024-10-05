@@ -384,8 +384,8 @@ float Game::colisionCheckPhase2(Ball* ball, sf::Vector2f ballEndPosition, std::s
             // // //block offset
             // // int blockOffsetX{ ((ball->getBallDirection() & 0x10) ? 0 : 1) };
             // // int blockOffsetY{ ((ball->getBallDirection() & 0x01) ? 0 : 1) };
-            float distanceX{0.f};
-            float distanceY{0.f};
+            float distanceX{-1.f};
+            float distanceY{-1.f};
             //if moving collision point by ball radious it is not needed to use ballOffset anymore
             //if ((ball->getBallDirection() & 0x10)) {   //going right
             //    if (collisionX > ball->getposition().x) {
@@ -430,26 +430,22 @@ float Game::colisionCheckPhase2(Ball* ball, sf::Vector2f ballEndPosition, std::s
 
             if ((ball->getBallDirection() & 0x10)) { //going right 
                 if (collisionX > ball->getposition().x) { //collision is to the right
-                    distanceX = calculateDistance(ball->getposition().x, ball->getposition().y,
-                        collisionX, blockWallY);
+                    distanceX = calculateDistance(ball->getposition(), collisionX, blockWallY);
                 }
             }
             else { //going left
                 if (collisionX < ball->getposition().x) { //collision is to the left
-                    distanceX = calculateDistance(ball->getposition().x, ball->getposition().y,
-                        collisionX, blockWallY);
+                    distanceX = calculateDistance(ball->getposition(), collisionX, blockWallY);
                 }
             }
             if ((ball->getBallDirection() & 0x01)) { // going donw
                 if (collisionY > ball->getposition().y) { // collision is lower (higher y value)
-                    distanceY = calculateDistance(ball->getposition().x, ball->getposition().y,
-                        blockWallX, collisionY);
+                    distanceY = calculateDistance(ball->getposition(), blockWallX, collisionY);
                 }
             }
             else { // going up
                 if (collisionY < ball->getposition().y) { // collision is higher (lower y value)
-                    distanceY = calculateDistance(ball->getposition().x, ball->getposition().y,
-                        blockWallX, collisionY);
+                    distanceY = calculateDistance(ball->getposition(), blockWallX, collisionY);
                 }
             }
 
@@ -600,6 +596,9 @@ float Game::calculateCoords(sf::Vector2f startPosition, sf::Vector2f endPosition
 }
 float Game::calculateDistance(sf::Vector2f ballPos, sf::Vector2f colision) {
     return sqrt((ballPos.x - colision.x) * (ballPos.x - colision.x) + (ballPos.y - colision.y) * (ballPos.y - colision.y));
+}
+float Game::calculateDistance(sf::Vector2f ball, float colisionX, float colisionY) {
+    return sqrt((ball.x - colisionX) * (ball.x - colisionX) + (ball.y - colisionY) * (ball.y - colisionY));
 }
 float Game::calculateDistance(float ballX, float ballY, float colisionX, float colisionY) {
     return sqrt((ballX - colisionX) * (ballX - colisionX) + (ballY - colisionY) * (ballY - colisionY));

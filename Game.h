@@ -45,7 +45,7 @@ private:
 	std::vector<Ball*> balls;
 	float ballSize{ 150/2 };
 	float ballSpeed{ 550 };
-	float alpha{150.0};
+	float alpha{30.0};
 
 	Paddle* paddle;
 	sf::Vector2f paddleSize{ 1550.f, 10.f };
@@ -104,6 +104,7 @@ public:
 
 	float calculateDistance(sf::Vector2f ballPos, sf::Vector2f colision);
 	float calculateDistance(float x, float y, float a, float b);
+	float calculateDistance(sf::Vector2f ball, float a, float b);
 	float calculateDistanceX(float xp, float yp, float xs, float ys, float yc);
 	float calculateDistanceY(float xp, float yp, float xs, float ys, float xc);
 	float calculateCoords(float startPositionX, float startPositionY, float endPositionX, float endPositionY, float collisionPositionX, float collisionPositionY);

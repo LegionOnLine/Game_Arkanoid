@@ -25,7 +25,6 @@ public:
 	//Ball(sf::Vector2f movementVec, sf::Vector2f possition, float size, float velocity);
 	//Ball(float x, float y, sf::Vector2f possition, float size, float velocity);
 	
-	void restoreMovement();
 
 	//calculate ballMovementVector - x/y coords depending on angle
 	void calcMovementVector(float alpha);
@@ -45,9 +44,11 @@ public:
 
 
 	//ball status
+	void restoreMovement();
 	bool isBallStuck();
 	void ballRelease();
 	void ballGetStuck();
+	void ballLost();
 
 
 	//temp func
@@ -56,7 +57,6 @@ public:
 	sf::FloatRect getBoundary();
 	sf::Vector2f getposition();
 	float getSize();
-	void ballLost();
 	bool getLostBall();
 	float getBallAlfa();
 	int getBallDirection();

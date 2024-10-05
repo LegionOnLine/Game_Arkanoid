@@ -4,6 +4,7 @@ void Ball::draw(sf::RenderTarget& target, sf::RenderStates state) const {
 	target.draw(this->shape, state);
 }
 Ball::Ball(float alpha, sf::Vector2f possition, float size, float velocity) {
+	shape.setPointCount(72); //use point every 5degree for ball drawing/callcuclating
 	recalcAlpha(alpha);
 	calcMovementVector(this->alpha);
 	this->ballRadius = size;
@@ -11,7 +12,7 @@ Ball::Ball(float alpha, sf::Vector2f possition, float size, float velocity) {
 	shape.setFillColor(sf::Color::White);
 	this->velocity = velocity;
 	shape.setOrigin(this->ballRadius, this->ballRadius);
-	shape.setPosition(possition.x, possition.y - this->ballRadius);
+	shape.setPosition(possition.x, possition.y);// -this->ballRadius);
 	this->distanceLeftToMove = this->velocity;
 
 	this->ballStuck = true;
@@ -167,6 +168,7 @@ void Ball::ballGetStuck() {
 //temp func
 sf::FloatRect Ball::getBoundary() {
 	return this->shape.getGlobalBounds();
+	//return this->shape.getLocalBounds();
 }
 
 sf::Vector2f Ball::getposition() {
