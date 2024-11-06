@@ -35,10 +35,9 @@ public:
 
 
 	//collisions
-	bool ballWindowCollision(sf::RenderTarget& window);
-	bool ballLost(float y);
-	bool ballFrameCollision(sf::Vector3f& frame);
-	bool ballPaddleCollision(sf::FloatRect paddle);
+	//bool ballLost(float y);
+	//bool ballFrameCollision(sf::Vector3f& frame);
+	//bool ballPaddleCollision(sf::FloatRect paddle);
 	void changeDirection(float x, float y);
 	void changeDirection(float beta);
 
@@ -48,7 +47,7 @@ public:
 	bool isBallStuck();
 	void ballRelease();
 	void ballGetStuck();
-	void ballLost();
+	//void ballLost();
 
 
 	//temp func

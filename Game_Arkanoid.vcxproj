@@ -145,10 +145,13 @@
   <ItemGroup>
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Block.cpp" />
+    <ClCompile Include="BlockClassTest.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="gTest.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Paddle.cpp" />
+    <ClCompile Include="BallClassTest.cpp" />
+    <ClCompile Include="PaddleClassTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />

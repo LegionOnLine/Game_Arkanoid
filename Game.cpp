@@ -686,7 +686,7 @@ void Game::colisionAlgorithm(Ball* ball) {
 void Game::update() {
     if (!this->gameOver) {
         int counter{ 0 };
-        bool ballLost{ false };
+        //bool ballLost{ false };
         for (auto ball : balls) {
             //check if ball movement is within specific range y
             //use x or y (smaller) to create list of potential colision

@@ -94,53 +94,38 @@ void Ball::moveBall(float distance) {
 }
 
 //collisions
-bool Ball::ballWindowCollision(sf::RenderTarget& window) {
-	//Right & Left
-	if (((this->shape.getPosition().x + static_cast<int>(this->ballRadius)) >= window.getSize().x) ||
-		((this->shape.getPosition().x - this->ballRadius) <= 0))
-		this->changeDirection(-1, 1);
-	//Top 
-	if ((this->shape.getPosition().y - this->ballRadius) <= 0)
-		this->changeDirection(1, -1);
-	//Bottom
-	else if ((this->shape.getPosition().y + this->ballRadius) > window.getSize().y) {
-		this->changeDirection(1, -1);
-		return false;
-	}
-	return true;
-}
 
-bool Ball::ballLost(float outOfScreen) {
-	//Bottom
-	if ((this->shape.getPosition().y + this->ballRadius) > outOfScreen) {
-		return true;
-	}
-	return false;
-}
+//bool Ball::ballLost(float outOfScreen) {
+//	//Bottom
+//	if ((this->shape.getPosition().y + this->ballRadius) > outOfScreen) {
+//		return true;
+//	}
+//	return false;
+//}
 
-bool Ball::ballFrameCollision(sf::Vector3f& frame) {
-	//Right & Left
-	if (((this->shape.getPosition().x - this->ballRadius) < frame.x) || // Left side
-		((this->shape.getPosition().x + this->ballRadius) > frame.z))	// Right side
-		this->changeDirection(-1, 1);
-	//Top 
-	if ((this->shape.getPosition().y - this->ballRadius) <= frame.y)	// Top side
-		this->changeDirection(1, -1);
-	//Bottom
-	return true;
-}
+//bool Ball::ballFrameCollision(sf::Vector3f& frame) {
+//	//Right & Left
+//	if (((this->shape.getPosition().x - this->ballRadius) < frame.x) || // Left side
+//		((this->shape.getPosition().x + this->ballRadius) > frame.z))	// Right side
+//		this->changeDirection(-1, 1);
+//	//Top 
+//	if ((this->shape.getPosition().y - this->ballRadius) <= frame.y)	// Top side
+//		this->changeDirection(1, -1);
+//	//Bottom
+//	return true;
+//}
 
-bool Ball::ballPaddleCollision(sf::FloatRect paddle){
-	//if bottome of ball is on the same lvl or bellow as paddle
-	if (
-		((this->shape.getPosition().y + this->ballRadius) >= paddle.top) &&
-		((this->shape.getPosition().y) <= paddle.top) &&
-		((this->shape.getPosition().x) >= paddle.left) && 
-		((this->shape.getPosition().x) <= (paddle.left + paddle.width) )) {
-			this->changeDirection(1, -1);
-		}
-	return false;
-}
+//bool Ball::ballPaddleCollision(sf::FloatRect paddle){
+//	//if bottome of ball is on the same lvl or bellow as paddle
+//	if (
+//		((this->shape.getPosition().y + this->ballRadius) >= paddle.top) &&
+//		((this->shape.getPosition().y) <= paddle.top) &&
+//		((this->shape.getPosition().x) >= paddle.left) && 
+//		((this->shape.getPosition().x) <= (paddle.left + paddle.width) )) {
+//			this->changeDirection(1, -1);
+//		}
+//	return false;
+//}
 
 void Ball::changeDirection(float x, float y) {
 	this->ballMovementVector.x *= x;
@@ -181,9 +166,9 @@ float Ball::getSize(){
 	return this->ballRadius;
 }
 
-void Ball::ballLost(){
-	this->lostBall = true;
-}
+//void Ball::ballLost(){
+//	this->lostBall = true;
+//}
 
 bool Ball::getLostBall(){
 	return this->lostBall;

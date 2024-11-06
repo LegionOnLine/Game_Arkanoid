@@ -11,7 +11,7 @@ private:
 	int hpMax;
 	int hp;
 	int points;
-	int id;
+	int id; 
 	static int i;
 
 public:
@@ -20,7 +20,7 @@ public:
 	};
 	void draw(sf::RenderTarget& target, sf::RenderStates state) const;
 	Block(float x, float y, float w, float h, int hp, sf::Color c = sf::Color::Red);
-	Block();
+	Block(); //used for paddle
 	virtual ~Block();
 
 	void initBlock(float x, float y, float w, float h, int hp, sf::Color c);

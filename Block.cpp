@@ -27,8 +27,8 @@ void Block::initBlock(float x, float y, float w, float h, int hp, sf::Color c){
 	this->hpMax = hp;
 	this->hp = this->hpMax;
 	this->points = hp;
-	this->id = i;
-	++i;
+	this->id = this->i++;
+	//++i;
 	//std::cout << i << std::endl;
 }
 
